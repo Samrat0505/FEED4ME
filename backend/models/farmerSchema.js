@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+const { Schema } = mongoose;
 
 const farmerSchema = new Schema({
   name: {
@@ -18,11 +18,14 @@ const farmerSchema = new Schema({
   },
   mobile: {
     type: String,
+    required: true, 
+    unique: true, 
+    minlength: 10
   },
   date: {
     type: Date,
     default: Date.now(),
-  }
+  },
 });
 
-module.exports = mongoose.model("Farmer", farmerSchema);
+module.exports = mongoose.model("Farmers", farmerSchema);
