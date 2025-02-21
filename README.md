@@ -27,48 +27,57 @@ API Endpoints
 
 1. Register a New Farmer
 ```
-Endpoint: POST /auth/register
+Endpoint: POST /localhost:3000/auth/register/initiate
 ```
 Request Body:
-```bash
+```json
 { 
-  "name": "mohan", 
-  "mobile": "89438383439",
+  "name": "rhohan", 
+  "mobile": "894383834",
   "password": "admin@123",
   "age":31,
   "location":"roorkee"
 }
 ```
 Response:
-```bash
+```json
 {
   "status": "Registration successful",
-  "userData": {
-    "name": "mohan",
-    "age": "31",
-    "location": "roorkee",
-    "password": "$2a$10$6SnM9j4kDJHvGXzURC9i3.UV.i/7KiytQLIGPKmjCqSwa2pE0hqKK",
-    "mobile": "89438383439",
-    "date": "2025-01-26T18:31:11.423Z",
-    "_id": "6796808eb24826ee6e0305d5",
-    "__v": 0
-  },
-  "token": "eyJhbGciOiJIUzI1NiJ9.ODk0MzgzODM0Mzk.sFW7JVsm1Y3T5W2Zl3UsZWh0Dkuu-3Yb2PbTNIcM2rc"
+  "message": "OTP sent successfully"
 }
 ```
-2. Login a Farmer
+2. Verify OTP
+**The twilio account is a trial account, so otp will be sent to "Akshay's" phone number**
 ```
-Endpoint: POST /auth/login
+Endpoint: POST localhost:3000/auth/register/verify
 ```
 Request Body:
-```bash
+```json
+{
+  "mobile":"894383834",
+  "otp":"16261"
+}
+```
+Response:
+```json
+{
+  "message": "Register successful!"
+}
+```
+
+3. Login a Farmer
+```
+Endpoint: POST http://127.0.0.1:3000/auth/login
+```
+Request Body:
+```json
 {
   "mobile":"89438383439",
   "password":"admin@123"
 }
 ```
 Response:
-```bash
+```json
 {
   "status": "Logged in successfully",
   "data": {
