@@ -4,7 +4,7 @@ import { Stack } from "expo-router";
 const Layout = () => {
   return (
     <Stack
-      screenOptions={{ headerShown: false, animation: "fade_from_bottom" }}
+      screenOptions={{ headerShown: false, }}
     >
       <Stack.Screen
         name="Dashboard"

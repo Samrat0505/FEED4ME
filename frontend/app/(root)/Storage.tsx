@@ -5,13 +5,13 @@ import LucidIcons from "~/components/LucidIcons";
 import { Box } from "lucide-react-native";
 const Storage = () => {
   return (
-    <ScrollView className="flex-1 bg-gray-100">
+    <ScrollView className="flex-1">
       <View className="pt-16 px-5">
         <Pressable
           onPress={() => router.back()}
-          className="w-10 h-10 rounded-full bg-black flex justify-center items-center"
+          className="w-10 h-10 rounded-full bg-slate-100 flex justify-center items-center"
         >
-          <Ionicons name="arrow-back" size={24} color="#fff" />
+          <Ionicons name="arrow-back" size={24} />
         </Pressable>
         <Text className="text-3xl font-bold my-5 shadow-lg">
           Storage Management
@@ -26,7 +26,7 @@ const Storage = () => {
         ].map((stat, index) => (
           <View
             key={index}
-            className="bg-white p-5 rounded-xl items-center w-[32%] shadow-md"
+            className="p-5 rounded-xl items-center w-[32%] border border-muted"
           >
             <Text className="text-2xl font-bold text-green-800 mt-2">
               {stat.value}
@@ -39,11 +39,11 @@ const Storage = () => {
       </View>
 
       <View className="px-3 mt-3">
-        <Text className="text-2xl font-bold text-gray-800 mb-3 px-1">
+        <Text className="text-xl font-semibold text-gray-800 mb-1 px-1">
           Storage Units
         </Text>
         {[1, 2, 3].map((unit) => (
-          <Pressable key={unit} className="bg-white p-5 rounded-xl my-1">
+          <Pressable key={unit} className="p-5 rounded-xl my-1 border border-muted">
             <View className="flex-row justify-between items-center my-1">
               <View className="flex-row items-center">
                 <LucidIcons IconName={Box} size={24} color="green" />

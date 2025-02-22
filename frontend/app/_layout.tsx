@@ -13,7 +13,6 @@ import { Platform } from "react-native";
 import { NAV_THEME } from "~/lib/constants";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { PortalHost } from "@rn-primitives/portal";
-import { ThemeToggle } from "~/components/ThemeToggle";
 import { setAndroidNavigationBar } from "~/lib/android-navigation-bar";
 
 const LIGHT_THEME: Theme = {
@@ -54,21 +53,24 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-      <StatusBar style={isDarkColorScheme ? "light" : "dark"} />
+      <StatusBar style={isDarkColorScheme ? "light" : "dark"} backgroundColor={!isDarkColorScheme ? "white" : "black"} />
       <Stack
-        screenOptions={{ headerShown: false, animation: "fade_from_bottom" }}
+        screenOptions={{ headerShown: false }}
       >
         <Stack.Screen
           name="index"
-          options={{
-            title: "Index",
-          }}
         />
         <Stack.Screen
           name="(root)"
-          options={{
-            title: "Starter Base",
-          }}
+        />
+        <Stack.Screen
+          name="Login"
+        />
+        <Stack.Screen
+          name="SignUp"
+        />
+        <Stack.Screen
+          name="MainScreen"
         />
       </Stack>
       <PortalHost />
