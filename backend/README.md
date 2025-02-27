@@ -39,6 +39,7 @@ Request Body:
 { 
   "name": "rhohan", 
   "mobile": "894383834",
+  "email": "something@example.com",
   "password": "admin@123",
   "age":31,
   "location":"roorkee"
@@ -59,7 +60,7 @@ Endpoint: POST localhost:3000/api/auth/:role/register/verify
 Request Body:
 ```json
 {
-  "mobile":"894383834",
+  "identifier":"894383834",
   "otp":"16261"
 }
 ```
@@ -77,7 +78,7 @@ Endpoint: POST http://127.0.0.1:3000/api/auth/:role/login
 Request Body:
 ```json
 {
-  "mobile":"89438383439",
+  "identifier":"89438383439",
   "password":"admin@123"
 }
 ```
