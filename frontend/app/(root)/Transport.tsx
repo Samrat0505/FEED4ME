@@ -6,15 +6,15 @@ import { MapPin, Truck } from "lucide-react-native";
 const Transport = () => {
   return (
     <ScrollView
-      className="flex-1 bg-gray-100"
+      className="flex-1"
       showsVerticalScrollIndicator={false}
     >
       <View className="pt-16 px-5">
         <Pressable
           onPress={() => router.back()}
-          className="w-10 h-10 rounded-full bg-black flex justify-center items-center"
+          className="w-10 h-10 rounded-full bg-slate-100 flex justify-center items-center"
         >
-          <Ionicons name="arrow-back" size={24} color="#fff" />
+          <Ionicons name="arrow-back" size={24} />
         </Pressable>
         <Text className="text-3xl font-bold my-5 shadow-lg">Transport Hub</Text>
       </View>
@@ -27,7 +27,7 @@ const Transport = () => {
         ].map((stat, index) => (
           <View
             key={index}
-            className="bg-white p-5 rounded-xl items-center w-[32%] shadow-md"
+            className="p-5 rounded-xl items-center w-[32%] border border-muted"
           >
             <Text className="text-2xl font-bold text-green-800 mt-2">
               {stat.value}
@@ -40,13 +40,13 @@ const Transport = () => {
       </View>
 
       <View className="p-3">
-        <Text className="text-2xl font-bold text-gray-800 mb-3 px-1">
+        <Text className="text-xl font-semibold mb-1 px-1">
           Active Deliveries
         </Text>
         {[1, 2, 3].map((delivery) => (
           <Pressable
             key={delivery}
-            className="bg-white p-5 rounded-xl my-1 shadow-md"
+            className="p-5 rounded-xl my-1 border border-muted"
           >
             <View className="flex-row justify-between items-center mb-3">
               <View className="flex-row items-center">

@@ -7,7 +7,7 @@ const About = () => {
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
       <View
-        className="flex-1 bg-gray-100 p-3"
+        className="flex-1 p-3"
         style={{ paddingTop: StatusBar.currentHeight }}
       >
         <View className="items-center mb-6">
@@ -20,7 +20,7 @@ const About = () => {
           </Text>
         </View>
 
-        <View className="bg-white p-5 rounded-xl shadow-md mb-2">
+        <View className="p-4 rounded-xl mb-2 border border-muted ">
           <Text className="text-xl font-bold text-gray-800 mb-3">
             Our Mission
           </Text>
@@ -31,7 +31,7 @@ const About = () => {
           </Text>
         </View>
 
-        <View className="bg-white p-5 rounded-xl shadow-md mb-2">
+        <View className="p-4 rounded-xl mb-2 border border-muted ">
           <Text className="text-xl font-bold text-gray-800 mb-3">
             Key Features
           </Text>
@@ -41,19 +41,19 @@ const About = () => {
             { icon: "car", title: "Goods Transportation" },
             { icon: "trash", title: "Waste Management" },
           ].map((feature, index) => (
-            <View key={index} className="flex-row items-center mb-4">
+            <View key={index} className="flex-row items-center mb-2">
               <Ionicons
                 name={feature.icon}
-                size={24}
+                size={20}
                 color="#2E7D32"
                 className="mr-4"
               />
-              <Text className="text-lg text-gray-700">{feature.title}</Text>
+              <Text>{feature.title}</Text>
             </View>
           ))}
         </View>
 
-        <View className="bg-white p-5 rounded-xl shadow-md">
+        <View className="p-4 rounded-xl mb-2 border border-muted ">
           <Text className="text-xl font-bold text-gray-800 mb-3">
             Our Vision
           </Text>

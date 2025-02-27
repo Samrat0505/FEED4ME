@@ -7,15 +7,15 @@ import { Droplet, Leaf, Sun } from "lucide-react-native";
 const Production = () => {
   return (
     <ScrollView
-      className="flex-1 bg-gray-100"
+      className="flex-1"
       showsVerticalScrollIndicator={false}
     >
       <View className="pt-16 px-5">
         <Pressable
           onPress={() => router.back()}
-          className="w-10 h-10 rounded-full bg-black flex justify-center items-center"
+          className="w-10 h-10 rounded-full bg-slate-100 flex justify-center items-center"
         >
-          <Ionicons name="arrow-back" size={24} color="#fff" />
+          <Ionicons name="arrow-back" size={24} />
         </Pressable>
         <Text className="text-3xl font-bold my-5 shadow-lg">
           Production Overview
@@ -24,7 +24,7 @@ const Production = () => {
 
       <View className="px-3">
         <View className="flex-row justify-between mb-6">
-          <View className="bg-white p-5 rounded-xl items-center w-[32%] shadow-md">
+          <View className="p-5 rounded-xl items-center w-[32%] border border-muted">
             <LucidIcons IconName={Leaf} size={24} color="#2E7D32" />
 
             <Text className="text-2xl font-bold text-green-800 mt-2">
@@ -34,14 +34,14 @@ const Production = () => {
               Active Crops
             </Text>
           </View>
-          <View className="bg-white p-5 rounded-xl items-center w-[32%] shadow-md">
+          <View className="p-5 rounded-xl items-center w-[32%] border border-muted">
             <LucidIcons IconName={Droplet} size={24} color="#2E7D32" />
             <Text className="text-2xl font-bold text-green-800 mt-2">87%</Text>
             <Text className="text-sm text-gray-500 text-center">
               Soil Health
             </Text>
           </View>
-          <View className="bg-white p-5 rounded-xl items-center w-[32%] shadow-md">
+          <View className="p-5 rounded-xl items-center w-[32%] border border-muted">
             <LucidIcons IconName={Sun} size={24} color="#2E7D32" />
             <Text className="text-2xl font-bold text-green-800 mt-2">28°C</Text>
             <Text className="text-sm text-gray-500 text-center">
@@ -50,7 +50,7 @@ const Production = () => {
           </View>
         </View>
 
-        <Text className="text-2xl font-bold text-gray-800 mb-3 px-1">
+        <Text className="text-xl font-semibold mb-3 px-1">
           Active Fields
         </Text>
         <View>

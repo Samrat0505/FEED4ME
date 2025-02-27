@@ -15,44 +15,41 @@ import LucidIcons from "~/components/LucidIcons";
 const ContactUs = () => {
   const data = [
     { icon: Leaf, title: "Crop Management" },
-    { icon: Droplet, title: "Irrigation" },
-    { icon: Bug, title: "Pest Control" },
+    { icon: Droplet, title: "Irrigation Control" },
+    { icon: Bug, title: "pesticides Control" },
     { icon: Thermometer, title: "Climate Control" },
   ];
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
-      contentContainerClassName="bg-gray-100"
     >
       <View className="pt-16 px-5">
         <Pressable
           onPress={() => router.back()}
-          className="w-10 h-10 rounded-full bg-black flex justify-center items-center"
+          className="w-10 h-10 rounded-full bg-slate-100 flex justify-center items-center"
         >
-          <Ionicons name="arrow-back" size={24} color="#fff" />
+          <Ionicons name="arrow-back" size={24} />
         </Pressable>
         <Text className="text-3xl font-bold my-5 shadow-lg">
           Support Center
         </Text>
       </View>
 
-      <View className="flex items-center justify-center flex-row flex-wrap pb-4">
+      <View className="flex items-center justify-center flex-row flex-wrap pb-1">
         {data?.map((topic, index) => {
           return (
             <Pressable
               key={index}
-              className="rounded-xl aspect-square m-1 flex items-center justify-center border border-muted bg-white w-[47%]"
+              className="rounded-xl m-1 p-5 flex items-start justify-start border border-muted w-[45%]"
             >
-              <LucidIcons IconName={topic.icon} size={32} color="green" />
-              <Text className="font-semibold py-2">{topic.title}</Text>
+              <LucidIcons IconName={topic.icon} size={30} strokeWidth={1.4} color="green" />
+              <Text className="font-bold pt-2 text-xl">{topic.title}</Text>
             </Pressable>
           );
         })}
       </View>
-      <Text className="text-2xl font-bold text-gray-800 mb-2 px-3">
-        Contact Support
-      </Text>
-      <View className="pb-3 px-3">
+
+      <View className="pb-3 px-4">
         {[
           {
             icon: MessageCircle,
@@ -72,16 +69,14 @@ const ContactUs = () => {
         ].map((contact, index) => (
           <Pressable
             key={index}
-            className="bg-white p-5 rounded-xl flex-row items-center shadow-md my-1"
+            className="p-2 px-4 flex-row items-center my-1 border border-muted rounded-xl"
           >
-            <View className="w-12 h-12 bg-green-100 rounded-full flex justify-center items-center">
-              <LucidIcons IconName={contact.icon} color="green" />
-            </View>
+            <LucidIcons IconName={contact.icon} color="green" size={23} />
             <View className="flex-1 ml-4">
               <Text className="text-lg font-bold text-gray-800">
                 {contact.title}
               </Text>
-              <Text className="text-sm text-gray-500">{contact.subtitle}</Text>
+              <Text className="text-sm text-muted-foreground">{contact.subtitle}</Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color="#666" />
           </Pressable>
