@@ -33,6 +33,7 @@ API Endpoints
 roles : [farmer, customer, storage]
 ```
 Endpoint: POST /localhost:3000/api/auth/:role/register/initiate
+                https://feed4me-server.onrender.com/api/auth/:role/register/initiate
 ```
 Request Body:
 ```json
@@ -56,6 +57,7 @@ Response:
 **The twilio account is a trial account, so otp will be sent to "Akshay's" phone number**
 ```
 Endpoint: POST localhost:3000/api/auth/:role/register/verify
+                https://feed4me-server.onrender.com/api/auth/:role/register/verify
 ```
 Request Body:
 ```json
@@ -74,6 +76,7 @@ Response:
 3. Login a User
 ```
 Endpoint: POST http://127.0.0.1:3000/api/auth/:role/login
+                https://feed4me-server.onrender.com/api/auth/:role/login
 ```
 Request Body:
 ```json
@@ -103,6 +106,7 @@ Response:
 4. Delete the User
 ```
 Endpoint: DELETE http://127.0.0.1:3000/api/auth/:role/delete
+                  https://feed4me-server.onrender.com/api/auth/:role/delete
 ```
 Request Body:
 ```json
@@ -120,6 +124,7 @@ Farmers API Documentation
 5. Get all Farmers
 ```
 Endpoint: GET http://127.0.0.1:3000/api/farmer
+              https://feed4me-server.onrender.com/api/farmer
 ```
 Response:
 ```json
@@ -163,6 +168,7 @@ Response:
 6. Get Farmer by id, name, email or mobile
 ```
 Endpoint: GET http://127.0.0.1:3000/api/farmer/:parameter
+              https://feed4me-server.onrender.com/api/farmer/:parameter
 ```
 Response:
 ```json
@@ -184,6 +190,7 @@ Response:
 7. Get profile
 ```
 Endpoint: GET http://127.0.0.1:3000/api/farmer/me
+              https://feed4me-server.onrender.com/api/farmer/me
 ```
 Request Body:
 ```json
@@ -223,6 +230,7 @@ Response:
 8. update its information
 ```
 Endpoint: PUT http://127.0.0.1:3000/api/farmer
+              https://feed4me-server.onrender.com/api/farmer
 ```
 Request Body:
 ```json
@@ -256,6 +264,7 @@ Crops API documentation
 9. add new crop
 ```
 Endpoint: POST http://127.0.0.1:3000/api/crops
+                https://feed4me-server.onrender.com/api/crops
 ```
 Request Body:
 ```json
