@@ -1,5 +1,5 @@
 import { Dimensions, ScrollView, StatusBar, View } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Text } from "~/components/ui/text";
 import { Button } from "~/components/ui/button";
 import { router } from "expo-router";
@@ -10,6 +10,7 @@ import { router } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import LucidIcons from "~/components/LucidIcons";
 import { Sprout } from "lucide-react-native";
+import axios from "axios";
 // import Vibrate from "~/lib/Vibrate";
 // import { useGlobalContext } from "~/Context/ContextProvider";
 
@@ -28,20 +29,17 @@ const MainScreen = () => {
   async function onGoogleButtonPress() {
     // Vibrate(isHapticFeedBackEnabled);
     // setIsLoading(true);
-
     // try {
     //   await GoogleSignin.hasPlayServices({
     //     showPlayServicesUpdateDialog: true,
     //   });
     //   const signInResult = await GoogleSignin.signIn();
-
     //   var idToken = signInResult.data?.idToken;
     //   if (!idToken) {
     //     idToken = signInResult.data.idToken;
     //   }
     //   if (!idToken) {
     //   }
-
     //   const googleCredential = auth.GoogleAuthProvider.credential(
     //     signInResult.data.idToken
     //   );
@@ -69,7 +67,10 @@ const MainScreen = () => {
               style={{ width: width - 50, height: height / 2 }}
               contentFit="contain"
             /> */}
-            <View style={{ width: width - 50, height: height / 2 }} className="flex items-center justify-center">
+            <View
+              style={{ width: width - 50, height: height / 2 }}
+              className="flex items-center justify-center"
+            >
               <LucidIcons IconName={Sprout} size={100} strokeWidth={1.1} />
             </View>
             <Text className="text-3xl font-bold">Lets you in</Text>
