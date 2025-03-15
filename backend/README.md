@@ -33,17 +33,22 @@ API Endpoints
 roles : [farmer, customer, storage]
 ```
 Endpoint: POST /localhost:3000/api/auth/:role/register/initiate
-                https://feed4me-server.onrender.com/api/auth/:role/register/initiate
+               https://feed4me-server.onrender.com/api/auth/:role/register/initiate
 ```
 Request Body:
 ```json
 { 
-  "name": "rhohan", 
-  "mobile": "894383834",
-  "email": "something@example.com",
+  "name": "akshay", 
+  "mobile": "4898429824",
   "password": "admin@123",
   "age":31,
-  "location":"roorkee"
+  "location": {
+      "address": "Delhi",
+      "coordinates": 
+      {
+        "type": "Point", 
+        "coordinates": [29.2183, 79.5130] }
+    }
 }
 ```
 Response:
@@ -57,7 +62,7 @@ Response:
 **The twilio account is a trial account, so otp will be sent to "Akshay's" phone number**
 ```
 Endpoint: POST localhost:3000/api/auth/:role/register/verify
-                https://feed4me-server.onrender.com/api/auth/:role/register/verify
+               https://feed4me-server.onrender.com/api/auth/:role/register/verify
 ```
 Request Body:
 ```json
@@ -69,14 +74,33 @@ Request Body:
 Response:
 ```json
 {
-  "message": "Register successful!"
+  "status": "Registration successful",
+  "data": {
+    "_id": "67d444362fa4659c4efc5fb1",
+    "name": "akshay",
+    "age": "31",
+    "location": {
+      "address": "Delhi",
+      "coordinates": {
+        "type": "Point",
+        "coordinates": [
+          29.2183,
+          79.513
+        ]
+      }
+    },
+    "role": "farmer",
+    "mobile": "4898429824",
+    "email": null
+  },
+  "token": "eyJhbGciOiJIUzI1NiJ9.NDg5ODQyOTgyNA.yr0882JZ5n-nXt1IpX0K41nQMmnu1I2JkwYfqKqZ_8k"
 }
 ```
 
 3. Login a User
 ```
 Endpoint: POST http://127.0.0.1:3000/api/auth/:role/login
-                https://feed4me-server.onrender.com/api/auth/:role/login
+               https://feed4me-server.onrender.com/api/auth/:role/login
 ```
 Request Body:
 ```json
@@ -90,23 +114,31 @@ Response:
 {
   "status": "Logged in successfully",
   "data": {
-    "_id": "6796808eb24826ee6e0305d5",
-    "name": "mohan",
+    "_id": "67d444362fa4659c4efc5fb1",
+    "name": "akshay",
     "age": "31",
-    "location": "roorkee",
-    "password": "$2a$10$6SnM9j4kDJHvGXzURC9i3.UV.i/7KiytQLIGPKmjCqSwa2pE0hqKK",
-    "mobile": "89438383439",
-    "date": "2025-01-26T18:31:11.423Z",
-    "__v": 0
+    "location": {
+      "coordinates": {
+        "type": "Point",
+        "coordinates": [
+          29.2183,
+          79.513
+        ]
+      },
+      "address": "Delhi"
+    },
+    "role": "farmer",
+    "mobile": "4898429824",
+    "email": null
   },
-  "token": "eyJhbGciOiJIUzI1NiJ9.ODk0MzgzODM0Mzk.sFW7JVsm1Y3T5W2Zl3UsZWh0Dkuu-3Yb2PbTNIcM2rc"
+  "token": "eyJhbGciOiJIUzI1NiJ9.NDg5ODQyOTgyNA.yr0882JZ5n-nXt1IpX0K41nQMmnu1I2JkwYfqKqZ_8k"
 }
 ```
 
 4. Delete the User
 ```
 Endpoint: DELETE http://127.0.0.1:3000/api/auth/:role/delete
-                  https://feed4me-server.onrender.com/api/auth/:role/delete
+               https://feed4me-server.onrender.com/api/auth/:role/delete
 ```
 Request Body:
 ```json
@@ -124,7 +156,7 @@ Farmers API Documentation
 5. Get all Farmers
 ```
 Endpoint: GET http://127.0.0.1:3000/api/farmer
-              https://feed4me-server.onrender.com/api/farmer
+               https://feed4me-server.onrender.com/api/farmer
 ```
 Response:
 ```json
@@ -168,7 +200,7 @@ Response:
 6. Get Farmer by id, name, email or mobile
 ```
 Endpoint: GET http://127.0.0.1:3000/api/farmer/:parameter
-              https://feed4me-server.onrender.com/api/farmer/:parameter
+               https://feed4me-server.onrender.com/api/farmer/:parameter
 ```
 Response:
 ```json
@@ -190,7 +222,7 @@ Response:
 7. Get profile
 ```
 Endpoint: GET http://127.0.0.1:3000/api/farmer/me
-              https://feed4me-server.onrender.com/api/farmer/me
+               https://feed4me-server.onrender.com/api/farmer/me
 ```
 Request Body:
 ```json
@@ -203,7 +235,16 @@ Response:
   "data": {
     "name": "radhe shyam",
     "age": "64",
-    "location": "ramnagar",
+    "location": {
+      "coordinates": {
+        "type": "Point",
+        "coordinates": [
+          77.1025,
+          28.7041
+        ]
+      },
+      "address": "Delhi"
+    },
     "mobile": "8943838343",
     "crops": [
       {
@@ -230,7 +271,7 @@ Response:
 8. update its information
 ```
 Endpoint: PUT http://127.0.0.1:3000/api/farmer
-              https://feed4me-server.onrender.com/api/farmer
+               https://feed4me-server.onrender.com/api/farmer
 ```
 Request Body:
 ```json
@@ -259,12 +300,203 @@ Response:
 ```
 
 
+Inventory API documentation
+
+9. add new inventory
+```
+Endpoint: POST http://127.0.0.1:3000/api/inventory
+               https://feed4me-server.onrender.com/api/inventory
+```
+Request Body:
+```json
+authorization : 'Bearer {token}'
+{
+  "name":"Storage E",
+  "totalQuantity":59000,
+  "price": 1200,
+  "location": {
+      "address": "Haldwani, RTO Road",
+      "coordinates": {
+        "type": "Point",
+        "coordinates": [29.22, 79.52]
+      }
+    }
+}
+```
+Response:
+```json
+{
+  "status": "Inventory added successfully",
+  "data": {
+    "name": "Storage E",
+    "crop": "all",
+    "totalQuantity": 59000,
+    "reservedQuantity": 0,
+    "pricePerUnit": 1200,
+    "owner": "67d3097fcd3d5a344d1dbce4",
+    "takenBy": [],
+    "location": {
+      "address": "Haldwani, RTO Road",
+      "coordinates": {
+        "type": "Point",
+        "coordinates": [
+          29.22,
+          79.52
+        ]
+      }
+    }
+  }
+}
+```
+
+10. get my inventories (only for storage owner)
+```
+Endpoint: POST http://127.0.0.1:3000/api/inventory
+               https://feed4me-server.onrender.com/api/inventory
+```
+Request Body:
+```json
+authorization : 'Bearer {token}'
+```
+Response:
+```json
+{
+  "status": "Inventory fetched successfully",
+  "data": [
+    {
+      "location": {
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            77.1025,
+            28.7041
+          ]
+        },
+        "address": "123 Warehouse St, Delhi, India"
+      },
+      "_id": "67d43154f729753f11841c6a",
+      "name": "Storage A",
+      "crop": "all",
+      "totalQuantity": 5000,
+      "reservedQuantity": 0,
+      "pricePerUnit": 1500,
+      "owner": "67d3097fcd3d5a344d1dbce4",
+      "takenBy": [],
+      "__v": 0
+    },
+    {
+      "location": {
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            29.1947,
+            79.5104
+          ]
+        },
+        "address": "Haldwani Rampur road"
+      },
+      "_id": "67d446fc2fa4659c4efc5fbe",
+      "name": "Storage D",
+      "crop": "all",
+      "totalQuantity": 59000,
+      "reservedQuantity": 0,
+      "pricePerUnit": 1200,
+      "owner": "67d3097fcd3d5a344d1dbce4",
+      "takenBy": [],
+      "__v": 0
+    },
+    {
+      "location": {
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            29.22,
+            79.52
+          ]
+        },
+        "address": "Haldwani, RTO Road"
+      },
+      "_id": "67d447a22fa4659c4efc5fc5",
+      "name": "Storage E",
+      "crop": "all",
+      "totalQuantity": 59000,
+      "reservedQuantity": 0,
+      "pricePerUnit": 1200,
+      "owner": "67d3097fcd3d5a344d1dbce4",
+      "takenBy": [],
+      "__v": 0
+    }
+  ]
+}
+```
+
+11. get inventories near me
+```
+Endpoint: POST http://127.0.0.1:3000/api/inventory/nearby
+               https://feed4me-server.onrender.com/api/inventory/nearby
+```
+Request Body:
+```json
+authorization : 'Bearer {token}'
+```
+Response:
+```json
+{
+  "status": "Inventory fetched successfully",
+  "data": [
+    {
+      "location": {
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            29.1947,
+            79.5104
+          ]
+        },
+        "address": "Haldwani Rampur road"
+      },
+      "_id": "67d446fc2fa4659c4efc5fbe",
+      "name": "Storage D",
+      "crop": "all",
+      "totalQuantity": 59000,
+      "reservedQuantity": 0,
+      "pricePerUnit": 1200,
+      "owner": "67d3097fcd3d5a344d1dbce4",
+      "takenBy": [],
+      "__v": 0
+    },
+    {
+      "location": {
+        "coordinates": {
+          "type": "Point",
+          "coordinates": [
+            29.22,
+            79.52
+          ]
+        },
+        "address": "Haldwani, RTO Road"
+      },
+      "_id": "67d447a22fa4659c4efc5fc5",
+      "name": "Storage E",
+      "crop": "all",
+      "totalQuantity": 59000,
+      "reservedQuantity": 0,
+      "pricePerUnit": 1200,
+      "owner": "67d3097fcd3d5a344d1dbce4",
+      "takenBy": [],
+      "__v": 0
+    }
+  ]
+}
+```
+
+
 Crops API documentation
 
-9. add new crop
+12. add new crop
 ```
 Endpoint: POST http://127.0.0.1:3000/api/crops
-                https://feed4me-server.onrender.com/api/crops
+               https://feed4me-server.onrender.com/api/crops
 ```
 Request Body:
 ```json
