@@ -5,20 +5,7 @@ import LucidIcons from "~/components/LucidIcons";
 import { MapPin, Truck } from "lucide-react-native";
 const Transport = () => {
   return (
-    <ScrollView
-      className="flex-1"
-      showsVerticalScrollIndicator={false}
-    >
-      <View className="pt-16 px-5">
-        <Pressable
-          onPress={() => router.back()}
-          className="w-10 h-10 rounded-full bg-slate-100 flex justify-center items-center"
-        >
-          <Ionicons name="arrow-back" size={24} />
-        </Pressable>
-        <Text className="text-3xl font-bold my-5 shadow-lg">Transport Hub</Text>
-      </View>
-
+    <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
       <View className="flex-row justify-between px-3">
         {[
           { value: "12", label: "Active Routes" },

@@ -2,7 +2,6 @@ import {
   View,
   StatusBar,
   ToastAndroid,
-  Dimensions,
   ScrollView,
   ActivityIndicator,
 } from "react-native";
@@ -12,12 +11,13 @@ import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
 import { loginUser } from "~/lib/Api";
 import { useGlobalContext } from "~/Context/ContextProvider";
+import { useTranslation } from "react-i18next";
 
 const Login = () => {
+  const { t } = useTranslation();
   const [value, setValue] = React.useState({
     email: "",
     password: "",
-    password1: "",
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -26,17 +26,12 @@ const Login = () => {
   const submitHandler = async () => {
     // Vibrate(isHapticFeedBackEnabled);
 
-    if (value.email === "" || value.password === "" || value.password1 === "") {
+    if (value.email === "" || value.password === "") {
       ToastAndroid.show("Email and password are mandatory", ToastAndroid.SHORT);
       setError("Email and password are mandatory.");
       return;
     }
 
-    if (value.password1 !== value.password) {
-      ToastAndroid.show("Passwords do not match!", ToastAndroid.SHORT);
-      setError("Passwords do not match!");
-      return;
-    }
     setIsLoading(true);
     try {
       const data = await loginUser("farmer", value.email, value.password);
@@ -53,9 +48,9 @@ const Login = () => {
           className="p-5 flex gap-3 dark:bg-black"
           style={{ paddingTop: StatusBar.currentHeight }}
         >
-          <Text className="text-4xl font-bold py-5 pb-0">Log in</Text>
+          <Text className="text-4xl font-bold py-5 pb-0">{t("Log in")}</Text>
           <Text className="font-semibold py-5 pt-0 text-muted-foreground">
-            log in to an existing account
+            {t("log in to an existing account")}
           </Text>
           {/*   
             <Image
@@ -64,24 +59,16 @@ const Login = () => {
               contentFit="contain"
             /> */}
 
-          <Text className="text-sm font-semibold">Enter your email</Text>
+          <Text className="text-sm font-semibold">{t("Enter your email")}</Text>
           <Input
             placeholder="example@xyz.com"
             onChangeText={(text: string) => setValue({ ...value, email: text })}
           />
-          <Text className="text-sm font-semibold">Enter password</Text>
+          <Text className="text-sm font-semibold">{t("Enter password")}</Text>
           <Input
             placeholder="******"
             onChangeText={(text: string) =>
               setValue({ ...value, password: text })
-            }
-            secureTextEntry={true}
-          />
-          <Text className="text-sm font-semibold">Re-Enter password</Text>
-          <Input
-            placeholder="******"
-            onChangeText={(text: string) =>
-              setValue({ ...value, password1: text })
             }
             secureTextEntry={true}
           />
@@ -91,7 +78,9 @@ const Login = () => {
             className="rounded-full mt-5"
             onPress={submitHandler}
           >
-            <Text>{isLoading ? <ActivityIndicator animating /> : "Login"}</Text>
+            <Text>
+              {isLoading ? <ActivityIndicator animating /> : `${t("Login")}`}
+            </Text>
           </Button>
           <View className="mb-5">
             {!!error && (

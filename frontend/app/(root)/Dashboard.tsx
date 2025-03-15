@@ -25,30 +25,23 @@ import {
   Image,
   Pressable,
   StatusBar,
-  useWindowDimensions,
 } from "react-native";
-import { Link, Route, router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import { Route, router } from "expo-router";
 import LucidIcons from "~/components/LucidIcons";
 import {
-  Bell,
-  BellDot,
   Box,
   CloudSunIcon,
   Info,
   Leaf,
   LucideIcon,
-  LucideLeafyGreen,
   MapPin,
-  PieChartIcon,
   Recycle,
   Sun,
-  Trash2,
   Truck,
   Users,
-  Utensils,
 } from "lucide-react-native";
 import { useGlobalContext } from "~/Context/ContextProvider";
+import { useTranslation } from "react-i18next";
 
 const Dashboard = () => {
   const CardItems: {
@@ -99,6 +92,8 @@ const Dashboard = () => {
     "https://i.pinimg.com/originals/ef/a2/8d/efa28d18a04e7fa40ed49eeb0ab660db.jpg";
 
   const { user } = useGlobalContext();
+  const { t } = useTranslation();
+
   return (
     <ScrollView
       className="flex-1"
@@ -115,31 +110,16 @@ const Dashboard = () => {
             className="h-14 w-14 rounded-full p-3"
           />
           <View className="flex item-center justify-start">
-            <Text className="text-muted-foreground text-sm">Welcome back</Text>
-            <Text className="text-xl font-semibold">{user.user?.name}</Text>
+            <Text className="text-muted-foreground text-sm">
+              {t("Welcome back")}
+            </Text>
+            <Text className="text-xl font-semibold">{t(user.user?.name)}</Text>
           </View>
         </View>
         {/* <Pressable className="bg-slate-50rounded-full p-3 w-[40] h-[40] flex item-center justify-center">
           <LucidIcons IconName={LucideLeafyGreen} size={20} color="green" />
         </Pressable> */}
       </Pressable>
-
-      {/* <View className="flex-row justify-between m-2 mx-5">
-        <View className="p-5 items-center w-[32%]">
-          <Text className="text-2xl font-bold text-green-800">1.2K</Text>
-          <Text className="text-sm text-gray-500 text-center">Active Farmers</Text>
-        </View>
-        <View className="p-5 items-center w-[32%]">
-          <Text className="text-2xl font-bold text-green-800">450</Text>
-          <Text className="text-sm text-gray-500 text-center">
-            Storage Units
-          </Text>
-        </View>
-        <View className=" p-5 items-center w-[32%]">
-          <Text className="text-2xl font-bold text-green-800">2.5T</Text>
-          <Text className="text-sm text-gray-500 text-center">Food Saved</Text>
-        </View>
-      </View> */}
 
       <View className="border border-muted p-3 rounded-xl m-2 mx-5">
         <View className="flex items-center justify-start flex-row gap-2">
@@ -202,9 +182,9 @@ const Dashboard = () => {
                 color="green"
               />
 
-              <Text className="font-bold pt-2 text-xl">{item.name}</Text>
+              <Text className="font-bold pt-2 text-xl">{t(item.name)}</Text>
               <Text className="text-muted-foreground text-sm text-wrap pr-5">
-                {item.description}
+                {t(item.description)}
               </Text>
             </Pressable>
           );

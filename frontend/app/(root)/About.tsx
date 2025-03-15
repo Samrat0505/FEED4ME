@@ -2,8 +2,10 @@ import { View, Text, ScrollView, Image, StatusBar } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import LucidIcons from "~/components/LucidIcons";
 import { Sprout } from "lucide-react-native";
+import { useTranslation } from "react-i18next";
 
 const About = () => {
+  const { t } = useTranslation();
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
       <View
@@ -14,26 +16,28 @@ const About = () => {
           <View className="w-40 h-40 bg-slate-50 rounded-full flex items-center justify-center my-5">
             <LucidIcons IconName={Sprout} size={80} strokeWidth={1} />
           </View>
-          <Text className="text-3xl font-bold text-gray-800">FEED4ME</Text>
+          <Text className="text-3xl font-bold text-gray-800">
+            {t("FEED4ME")}
+          </Text>
           <Text className="text-lg text-gray-600 text-center">
-            From Seed to Soul
+            {t("From Seed to Soul")}
           </Text>
         </View>
 
         <View className="p-4 rounded-xl mb-2 border border-muted ">
           <Text className="text-xl font-bold text-gray-800 mb-3">
-            Our Mission
+            {t("Our Mission")}
           </Text>
           <Text className="text-gray-600">
-            FEED4ME is a technology-driven platform optimizing the food supply
-            chain from production to waste management. We empower farmers,
-            streamline logistics, and minimize food wastage through innovation.
+            {t(
+              "FEED4ME is a technology-driven platform optimizing the food supply chain from production to waste management. We empower farmers, streamline logistics, and minimize food wastage through innovation."
+            )}
           </Text>
         </View>
 
         <View className="p-4 rounded-xl mb-2 border border-muted ">
           <Text className="text-xl font-bold text-gray-800 mb-3">
-            Key Features
+            {t("Key Features")}
           </Text>
           {[
             { icon: "leaf", title: "Production Assistance" },
@@ -48,20 +52,19 @@ const About = () => {
                 color="#2E7D32"
                 className="mr-4"
               />
-              <Text>{feature.title}</Text>
+              <Text>{t(feature.title)}</Text>
             </View>
           ))}
         </View>
 
         <View className="p-4 rounded-xl mb-2 border border-muted ">
           <Text className="text-xl font-bold text-gray-800 mb-3">
-            Our Vision
+            {t("Our Vision")}
           </Text>
           <Text className="text-gray-600">
-            We envision a sustainable food ecosystem where farmers, businesses,
-            and consumers benefit from efficient technology, real-time data, and
-            smart logistics to ensure food security and environmental
-            responsibility.
+            {t(
+              "We envision a sustainable food ecosystem where farmers, businesses, and consumers benefit from efficient technology, real-time data, and smart logistics to ensure food security and environmental responsibility."
+            )}
           </Text>
         </View>
       </View>

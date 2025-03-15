@@ -15,6 +15,8 @@ import { useColorScheme } from "~/lib/useColorScheme";
 import { PortalHost } from "@rn-primitives/portal";
 import { setAndroidNavigationBar } from "~/lib/android-navigation-bar";
 import ContextProvider from "~/Context/ContextProvider";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import "../lib/i18next";
 
 const LIGHT_THEME: Theme = {
   ...DefaultTheme,
@@ -54,20 +56,22 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-      <StatusBar
-        style={isDarkColorScheme ? "light" : "dark"}
-        backgroundColor={!isDarkColorScheme ? "white" : "black"}
-      />
-      <ContextProvider>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="index" />
-          <Stack.Screen name="(root)" />
-          <Stack.Screen name="Login" />
-          <Stack.Screen name="SignUp" />
-          <Stack.Screen name="MainScreen" />
-        </Stack>
-        <PortalHost />
-      </ContextProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <StatusBar
+          style={isDarkColorScheme ? "light" : "dark"}
+          backgroundColor={!isDarkColorScheme ? "white" : "black"}
+        />
+        <ContextProvider>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="index" />
+            <Stack.Screen name="(root)" />
+            <Stack.Screen name="Login" />
+            <Stack.Screen name="SignUp" />
+            <Stack.Screen name="MainScreen" />
+          </Stack>
+          <PortalHost />
+        </ContextProvider>
+      </GestureHandlerRootView>
     </ThemeProvider>
   );
 }

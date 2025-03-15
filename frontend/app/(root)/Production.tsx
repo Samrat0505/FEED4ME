@@ -1,27 +1,10 @@
 import { View, Text, ScrollView, Image, Pressable } from "react-native";
-import { Link, router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
 import LucidIcons from "~/components/LucidIcons";
 import { Droplet, Leaf, Sun } from "lucide-react-native";
 
 const Production = () => {
   return (
-    <ScrollView
-      className="flex-1"
-      showsVerticalScrollIndicator={false}
-    >
-      <View className="pt-16 px-5">
-        <Pressable
-          onPress={() => router.back()}
-          className="w-10 h-10 rounded-full bg-slate-100 flex justify-center items-center"
-        >
-          <Ionicons name="arrow-back" size={24} />
-        </Pressable>
-        <Text className="text-3xl font-bold my-5 shadow-lg">
-          Production Overview
-        </Text>
-      </View>
-
+    <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
       <View className="px-3">
         <View className="flex-row justify-between mb-6">
           <View className="p-5 rounded-xl items-center w-[32%] border border-muted">
@@ -50,9 +33,7 @@ const Production = () => {
           </View>
         </View>
 
-        <Text className="text-xl font-semibold mb-3 px-1">
-          Active Fields
-        </Text>
+        <Text className="text-xl font-semibold mb-3 px-1">Active Fields</Text>
         <View>
           <View className="border border-muted bg-white px-3 py-3 my-1 rounded-lg">
             <Text className="text-xl font-semibold pb-2">Field no #857</Text>

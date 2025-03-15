@@ -4,26 +4,17 @@ import {
   ToastAndroid,
   Dimensions,
   ScrollView,
-  TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
 import React, { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Text } from "~/components/ui/text";
-import LucidIcons from "~/components/LucidIcons";
-import { ActivityIcon, KeyIcon } from "lucide-react-native";
-import axios from "axios";
 import { registerUser, verifyOTP } from "~/lib/Api";
-import { router } from "expo-router";
 import { useGlobalContext } from "~/Context/ContextProvider";
-// import auth from "@react-native-firebase/auth";
-// import Loader from "~/components/loader";
-// import { Image } from "expo-image";
-// import Vibrate from "~/lib/Vibrate";
-// import { useGlobalContext } from "~/Context/ContextProvider";
-
+import { useTranslation } from "react-i18next";
 const SignUp = () => {
+  const { t } = useTranslation();
   const [value, setValue] = React.useState({
     name: "",
     email: "",
@@ -102,8 +93,12 @@ const SignUp = () => {
             className="p-5 flex gap-3 dark:bg-black"
             style={{ paddingTop: StatusBar.currentHeight }}
           >
-            <Text className="text-2xl font-bold text-gray-800">Enter OTP</Text>
-            <Text>Otp sent to your email address - {value.email}</Text>
+            <Text className="text-2xl font-bold text-gray-800">
+              {t("Enter OTP")}
+            </Text>
+            <Text>
+              {t("Otp sent to your email address")} - {value.email}
+            </Text>
 
             <View className="flex-row space-x-2 justify-center">
               {[...Array(5)].map((_, index) => (
@@ -132,9 +127,9 @@ const SignUp = () => {
             className="p-5 flex gap-3 dark:bg-black"
             style={{ paddingTop: StatusBar.currentHeight }}
           >
-            <Text className="text-4xl font-bold py-5 pb-0">Sign up</Text>
+            <Text className="text-4xl font-bold py-5 pb-0">{t("Sign up")}</Text>
             <Text className="font-semibold py-5 pt-0 text-muted-foreground">
-              create new account account
+              {t("create new account account")}
             </Text>
             {/* <View className="flex items-center justify-center"> */}
             {/* <Image
@@ -144,19 +139,23 @@ const SignUp = () => {
               /> */}
             {/* </View> */}
 
-            <Text className="text-sm font-semibold">Enter your name</Text>
+            <Text className="text-sm font-semibold">
+              {t("Enter your name")}
+            </Text>
             <Input
               placeholder="John doe"
               onChangeText={(text) => setValue({ ...value, name: text })}
               textContentType="name"
             />
-            <Text className="text-sm font-semibold">Enter your email</Text>
+            <Text className="text-sm font-semibold">
+              {t("Enter your email")}
+            </Text>
             <Input
               placeholder="example@xyz.com"
               onChangeText={(text) => setValue({ ...value, email: text })}
               textContentType="emailAddress"
             />
-            <Text className="text-sm font-semibold">Mobile number</Text>
+            <Text className="text-sm font-semibold">{t("Mobile number")}</Text>
             <Input
               placeholder="+91 9678908798"
               keyboardType="numeric"
@@ -164,21 +163,23 @@ const SignUp = () => {
               onChangeText={(text) => setValue({ ...value, MobileNo: text })}
             />
 
-            <Text className="text-sm font-semibold">Enter your age</Text>
+            <Text className="text-sm font-semibold">{t("Enter your age")}</Text>
             <Input
               placeholder="24"
               keyboardType="numeric"
               maxLength={2}
               onChangeText={(text) => setValue({ ...value, age: text })}
             />
-            <Text className="text-sm font-semibold">Enter password</Text>
+            <Text className="text-sm font-semibold">{t("Enter password")}</Text>
             <Input
               placeholder="******"
               onChangeText={(text) => setValue({ ...value, password: text })}
               secureTextEntry={true}
               textContentType="password"
             />
-            <Text className="text-sm font-semibold">Re-Enter password</Text>
+            <Text className="text-sm font-semibold">
+              {t("Re-Enter password")}
+            </Text>
             <Input
               placeholder="******"
               onChangeText={(text) => setValue({ ...value, password1: text })}
@@ -192,7 +193,11 @@ const SignUp = () => {
               onPress={signUpHandler}
             >
               <Text>
-                {isLoading ? <ActivityIndicator animating /> : "Sign up"}
+                {isLoading ? (
+                  <ActivityIndicator animating />
+                ) : (
+                  `${t("Sign up")}`
+                )}
               </Text>
             </Button>
 
