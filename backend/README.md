@@ -263,7 +263,25 @@ Response:
         "stock": 400
       }
     ],
-    "customers": []
+    "customers": [],
+    "inventory": [
+      {
+        "id": "67d5602cdd85cc341df87fe2",
+        "name": "Storage A",
+        "crop": "all",
+        "area": 600,
+        "cost": 720000,
+        "owner": "67d55ffadd85cc341df87fdc"
+      },
+      {
+        "id": "67d560a0dd85cc341df87fea",
+        "name": "Storage C",
+        "crop": "all",
+        "area": 5000,
+        "cost": 5000000,
+        "owner": "67d55ffadd85cc341df87fdc"
+      }
+    ]
   }
 }
 ```
@@ -438,6 +456,10 @@ Endpoint: POST http://127.0.0.1:3000/api/inventory/nearby
 Request Body:
 ```json
 authorization : 'Bearer {token}'
+{
+  "lat":25.4683, (option)
+  "lng":81.8546  (option)
+}
 ```
 Response:
 ```json
@@ -490,10 +512,47 @@ Response:
 }
 ```
 
+12. rent the inventory
+```
+Endpoint: POST http://localhost:3000/api/inventory/purchase
+               https://feed4me-server.onrender.com/api/inventory/purchase
+```
+Request Body:
+```json
+authorization : 'Bearer {token}'
+{
+  "inventoryId": "67d560a0dd85cc341df87fea",
+  "quantity": 5000
+}
+```
+Response:
+```json
+{
+  "status": "Inventory purchased successfully",
+  "invoice": {
+    "farmer": "67d444362fa4659c4efc5fb1",
+    "name": "akshay",
+    "seller": {
+      "name": "akshay",
+      "email": "nol.void75@gmail.com",
+      "address": "Pantnagar"
+    },
+    "inventory": {
+      "id": "67d560a0dd85cc341df87fea",
+      "name": "Storage C",
+      "location": "Prayagraaj"
+    },
+    "quantity": 5000,
+    "totalPrice": 5000000,
+    "date": "2025-03-15T13:23:29.126Z"
+  }
+}
+```
+
 
 Crops API documentation
 
-12. add new crop
+13. add new crop
 ```
 Endpoint: POST http://127.0.0.1:3000/api/crops
                https://feed4me-server.onrender.com/api/crops
