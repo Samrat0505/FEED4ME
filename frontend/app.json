@@ -6,23 +6,21 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
     "android": {
-       "config": {
+      "config": {
         "googleMaps": {
-          "apiKey":  "AIzaSyB9A4v_friwcRkiLRA_eM49-9PbSjBDJsk"
+          "apiKey": "AIzaSyB9A4v_friwcRkiLRA_eM49-9PbSjBDJsk"
         }
       },
       "adaptiveIcon": {
@@ -37,7 +35,8 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router", [
+      "expo-router",
+      [
         "expo-location",
         {
           "locationAlwaysAndWhenInUsePermission": "Allow FEED4ME to use your location."

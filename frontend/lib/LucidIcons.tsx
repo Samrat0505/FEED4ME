@@ -6,9 +6,11 @@ const LucidIcons = ({
   IconName,
   size,
   color,
+  strokeWidth,
 }: {
   IconName: LucideIcon;
   size?: number;
+  strokeWidth?: number;
   color?: string;
 }) => {
   const { isDarkColorScheme } = useColorScheme();
@@ -16,6 +18,7 @@ const LucidIcons = ({
     <IconName
       size={size ?? 17}
       color={color ? color : !isDarkColorScheme ? "black" : "white"}
+      strokeWidth={strokeWidth}
     />
   );
 };

@@ -10,8 +10,8 @@ import {
   Phone,
   Thermometer,
 } from "lucide-react-native";
-import LucidIcons from "~/components/LucidIcons";
 import { useTranslation } from "react-i18next";
+import LucidIcons from "~/lib/LucidIcons";
 
 const ContactUs = () => {
   const { t } = useTranslation();

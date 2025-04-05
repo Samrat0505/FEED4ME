@@ -1,32 +1,56 @@
 import axios from "axios";
 import { ToastAndroid } from "react-native";
-
+import { role, User } from "./Types";
 const BASE_URL = "https://feed4me-server.onrender.com/api";
-// const BASE_URL = "http://localhost:3000/api";
 
-export interface User {
+const axiosInstance = axios.create({
+  baseURL: BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+const handleError = (error: any, defaultMessage: string): void => {
+  const errorMessage = error.response?.data?.error || defaultMessage;
+  ToastAndroid.show(errorMessage, ToastAndroid.SHORT);
+};
+
+export type Inventory = {
+  _id: string;
   name: string;
-  mobile: number | null;
-  email: string;
-  password: string;
-  age: number;
-  location: string;
-}
-
-interface LoginResponse {
-  status: string;
-  data: {
-    _id: string;
-    name: string;
-    age: string;
-    location: string;
-    password: string;
-    mobile: string;
-    date: string;
-    __v: number;
+  crop: string;
+  totalQuantity: number;
+  reservedQuantity: number;
+  pricePerUnit: number;
+  owner: string;
+  takenBy: { farmer: string; quantity: number; _id: string }[];
+  location: {
+    address: string;
+    coordinates: {
+      type: "Point";
+      coordinates: [number, number];
+    };
   };
-  token: string;
-}
+};
+
+export type AddInventoryRequest = {
+  name: string;
+  totalQuantity: number;
+  price: number;
+  crop: string;
+  location: {
+    address: string;
+    coordinates: {
+      type: "Point";
+      coordinates: [number, number]; // [latitude, longitude]
+    };
+  };
+};
+
+type InventoryResponse = {
+  status: string;
+  data: Inventory | Inventory[];
+};
 
 interface Crop {
   name: string;
@@ -34,18 +58,33 @@ interface Crop {
   stock: number;
 }
 
+// 🔹 User Authentication Functions
 export const registerUser = async (
   role: string,
-  userData: User
+  userData: {
+    age: string;
+    password: string;
+    email: string | null;
+    location: {
+      address: string;
+      coordinates: {
+        type: "Point";
+        coordinates: [number, number];
+      };
+    };
+    mobile: string;
+    name: string;
+  }
 ): Promise<void | null> => {
   try {
-    const { data } = await axios.post(
+    const response = await axios.post(
       `${BASE_URL}/auth/${role}/register/initiate`,
       userData
     );
-    return data;
-  } catch (error: any) {
-    ToastAndroid.show(error.response?.data.error, ToastAndroid.SHORT);
+    ToastAndroid.show(response.data.status, ToastAndroid.SHORT);
+    return response.data;
+  } catch (error) {
+    handleError(error, "Failed to register user.");
     return null;
   }
 };
@@ -60,141 +99,212 @@ export const verifyOTP = async (
       `${BASE_URL}/auth/${role}/register/verify`,
       { identifier, otp }
     );
-    return { user: response.data.user, token: response.data.token };
-  } catch (error: any) {
-    ToastAndroid.show(error.response?.data.error, ToastAndroid.SHORT);
+    console.log(response.data);
+
+    ToastAndroid.show(response.data.status, ToastAndroid.SHORT);
+    return { user: response.data.data, token: response.data.token };
+  } catch (error) {
+    handleError(error, "Failed to verify OTP.");
     return null;
   }
 };
 
 export const loginUser = async (
-  role: string,
+  role: role,
   identifier: string,
   password: string
-) => {
+): Promise<{ data: User; token: string; status: string } | null> => {
   try {
-    const response = await axios.post<LoginResponse>(
-      `${BASE_URL}/auth/${role}/login`,
-      { identifier, password }
-    );
+    const response = await axios.post<{
+      data: User;
+      token: string;
+      status: string;
+    }>(`${BASE_URL}/auth/${role}/login`, { identifier, password });
+    ToastAndroid.show(response.data.status, ToastAndroid.SHORT);
     return response.data;
-  } catch (error: any) {
-    ToastAndroid.show(error.response?.data.error, ToastAndroid.SHORT);
+  } catch (error) {
+    handleError(error, "Login failed.");
     return null;
   }
 };
 
-// 4️⃣ Delete a User
-const deleteUser = async (role: string, token: string): Promise<void> => {
+export const deleteUser = async (
+  role: string,
+  token: string
+): Promise<void> => {
   try {
-    const response = await axios.delete(`${BASE_URL}/auth/${role}/delete`, {
+    await axios.delete(`${BASE_URL}/auth/${role}/delete`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-  } catch (error: any) {
-    console.error(error.response?.data || error.message);
+  } catch (error) {
+    handleError(error, "Failed to delete user.");
   }
 };
 
-// 5️⃣ Get All Farmers
-const getAllFarmers = async (): Promise<void> => {
+// 🔹 Farmer Management Functions
+export const getAllFarmers = async (): Promise<User[] | null> => {
   try {
     const response = await axios.get(`${BASE_URL}/farmer`);
-  } catch (error: any) {
-    console.error(error.response?.data || error.message);
+    return response.data;
+  } catch (error) {
+    handleError(error, "Failed to fetch all farmers.");
+    return null;
   }
 };
 
-// 6️⃣ Get Farmer by ID, Name, Email, or Mobile
-const getFarmer = async (parameter: string): Promise<void | null> => {
+export const getFarmer = async (parameter: string): Promise<User | null> => {
   try {
     const response = await axios.get(`${BASE_URL}/farmer/${parameter}`);
     return response.data;
-  } catch (error: any) {
-    ToastAndroid.show(error.response?.data.error, ToastAndroid.SHORT);
+  } catch (error) {
+    handleError(error, "Failed to fetch farmer data.");
     return null;
   }
 };
 
-// 7️⃣ Get Farmer Profile
-export const getFarmerProfile = async (token: string): Promise<void | null> => {
+export const getFarmerProfile = async (token: string): Promise<User | null> => {
   try {
     const response = await axios.get(`${BASE_URL}/farmer/me`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    return response.data;
-  } catch (error: any) {
-    console.error(error.response?.data || error.message);
+    return response.data.data;
+  } catch (error) {
+    handleError(error, "Failed to fetch profile.");
     return null;
   }
 };
 
-// 8️⃣ Update Farmer Information
-const updateFarmer = async (
+export const updateFarmer = async (
   token: string,
   updateData: Partial<User>
 ): Promise<void> => {
   try {
-    const response = await axios.put(`${BASE_URL}/farmer`, updateData, {
+    await axios.put(`${BASE_URL}/farmer`, updateData, {
       headers: { Authorization: `Bearer ${token}` },
     });
-  } catch (error: any) {
-    console.error(error.response?.data || error.message);
+  } catch (error) {
+    handleError(error, "Failed to update farmer data.");
   }
 };
 
-// 9️⃣ Add New Crop
-const addCrop = async (token: string, cropData: Crop): Promise<void> => {
+// 🔹 Crop Management Functions
+export const addCrop = async (token: string, cropData: Crop): Promise<void> => {
   try {
-    const response = await axios.post(`${BASE_URL}/crops`, cropData, {
+    await axios.post(`${BASE_URL}/crops`, cropData, {
       headers: { Authorization: `Bearer ${token}` },
     });
-  } catch (error: any) {
-    console.error(error.response?.data || error.message);
+  } catch (error) {
+    handleError(error, "Failed to add new crop.");
   }
 };
 
-// Example Usage
-// (async () => {
-//   try {
-//     // 1. Register a user (example with farmer role)
-//     await registerUser("farmer", {
-//       name: "Rohan",
-//       mobile: 894383834,
-//       email: "something@example.com",
-//       password: "admin@123",
-//       age: 31,
-//       location: "Roorkee",
-//     });
+// 🔹 Inventory Management Functions
 
-//     // 2. Verify OTP
-//     await verifyOTP("farmer", "894383834", "16261");
+export const addNewInventory = async (
+  data: AddInventoryRequest,
+  token: string
+): Promise<Inventory | null> => {
+  try {
+    const formattedData = {
+      ...data,
+      location: {
+        address: data.location.address,
+        coordinates: {
+          type: "Point",
+          coordinates: [
+            data.location.coordinates.coordinates[0], // Latitude
+            data.location.coordinates.coordinates[1], // Longitude
+          ],
+        },
+      },
+    };
 
-//     // 3. Login and get the token
-//     const token = await loginUser("farmer", "89438383439", "admin@123");
-//     if (!token) throw new Error("Login failed!");
+    const response = await axios.post<InventoryResponse>(
+      `${BASE_URL}/inventory`,
+      formattedData,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
 
-//     // 4. Get all farmers
-//     await getAllFarmers();
+    return response.data.data as Inventory;
+  } catch (error) {
+    handleError(error, "Failed to add inventory.");
+    return null;
+  }
+};
 
-//     // 5. Get farmer by ID
-//     await getFarmer("8943838343");
+export const getMyInventories = async (
+  token: string
+): Promise<Inventory[] | null> => {
+  try {
+    const response = await axios.get<InventoryResponse>(
+      `${BASE_URL}/inventory`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    return response.data.data as Inventory[];
+  } catch (error) {
+    handleError(error, "Failed to fetch inventories.");
+    return null;
+  }
+};
 
-//     // 6. Get profile
-//     await getFarmerProfile(token);
+export const getInventoriesNearby = async (
+  token: string,
+  lat: number | null,
+  long: number | null
+): Promise<Inventory[] | null> => {
+  try {
+    const response = await axios.get<InventoryResponse>(
+      `${BASE_URL}/inventory/nearby?lat=${lat}&lng=${long}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    return response.data.data as Inventory[];
+  } catch (error) {
+    handleError(error, "Failed to fetch nearby inventories.");
+    return null;
+  }
+};
+export const getStorageDetailsByID = async (
+  id: string,
+  token: string
+): Promise<Inventory | null> => {
+  try {
+    const response = await axios.get(`${BASE_URL}/inventory/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
-//     // 7. Update farmer details
-//     await updateFarmer(token, {
-//       name: "Radhe Shyam",
-//       age: 64,
-//       location: "Ramnagar",
-//     });
+    return response.data.data as Inventory;
+  } catch (error) {
+    handleError(error, "Failed to fetch nearby inventories.");
+    return null;
+  }
+};
 
-//     // 8. Add a crop
-//     await addCrop(token, { name: "Genhu", MRP: 100, stock: 400 });
-
-//     // 9. Delete user (optional)
-//     // await deleteUser("farmer", token);
-//   } catch (error) {
-//     console.error("Error in execution:", error);
-//   }
-// })();
+export const purchaseInventory = async (
+  token: string,
+  inventoryId: string,
+  quantity: number
+) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/inventory/purchase`,
+      {
+        inventoryId: inventoryId,
+        quantity: quantity,
+      },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    ToastAndroid.show(response.data.status, ToastAndroid.SHORT);
+    return response.data.invoice as Inventory[];
+  } catch (error) {
+    handleError(error, "Failed to purchase inventories.");
+    return null;
+  }
+};

@@ -10,13 +10,13 @@ import React, { useRef } from "react";
 import { Text } from "~/components/ui/text";
 import { Button } from "~/components/ui/button";
 import { router } from "expo-router";
-import LucidIcons from "~/components/LucidIcons";
 import { ChevronDown, Languages, Sprout } from "lucide-react-native";
 import BottomSheet from "@gorhom/bottom-sheet";
 import BottomSheetComponent from "~/components/BottomSheetComponent";
 import i18n, { changeLanguage } from "~/lib/i18next";
 import { cn } from "~/lib/utils";
 import { useTranslation } from "react-i18next";
+import LucidIcons from "~/lib/LucidIcons";
 const MainScreen = () => {
   const { height, width } = Dimensions.get("screen");
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -99,7 +99,6 @@ const MainScreen = () => {
         ref={bottomSheetRef}
         title={t("Select Language")}
         subTitle={t("Choose your preferred language")}
-        snapPoints={["40%"]}
         backdropOpacity={0.6}
         BottomSheetFooterComponent={
           <Button onPress={() => bottomSheetRef.current?.close()}>

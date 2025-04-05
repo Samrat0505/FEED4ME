@@ -15,7 +15,6 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { useFocusEffect } from "expo-router";
-import { cn } from "~/lib/utils";
 import { Text } from "./ui/text";
 
 export type Ref = BottomSheet;
@@ -25,7 +24,6 @@ interface Props {
   subTitle: string;
   children: ReactElement;
   BottomSheetFooterComponent?: ReactElement;
-  snapPoints?: (number | string)[];
   backdropOpacity?: number;
 }
 
@@ -90,8 +88,7 @@ const BottomSheetComponent = forwardRef<Ref, Props>((props, ref) => {
       index={-1}
       onChange={(index) => setIsSheetOpen(index >= 0)}
       enablePanDownToClose={true}
-      snapPoints={props.snapPoints}
-      enableDynamicSizing={props.snapPoints === undefined ? true : false}
+      enableDynamicSizing={true}
       backgroundStyle={backgroundStyle}
       handleIndicatorStyle={handleIndicatorStyle}
       backdropComponent={BackdropComponent}
@@ -106,7 +103,6 @@ const BottomSheetComponent = forwardRef<Ref, Props>((props, ref) => {
           {props.subTitle}
         </Text>
         <View>{props.children}</View>
-        {/* <View className={"p-2"} /> */}
       </BottomSheetScrollView>
     </BottomSheet>
   );

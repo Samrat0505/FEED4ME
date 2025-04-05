@@ -1,8 +1,6 @@
 import { View, Text, ScrollView, Pressable } from "react-native";
-import { Link, router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
-import LucidIcons from "~/components/LucidIcons";
 import { MapPin, Truck } from "lucide-react-native";
+import LucidIcons from "~/lib/LucidIcons";
 const Transport = () => {
   return (
     <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>

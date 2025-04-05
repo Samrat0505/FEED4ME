@@ -1,23 +1,3 @@
-// import {
-//   View,
-//   Text,
-//   StatusBar,
-//   ScrollView,
-//   useWindowDimensions,
-// } from "react-native";
-// import React from "react";
-// import LucidIcons from "~/components/LucidIcons";
-// import {
-//   CloudSunIcon,
-//   Leaf,
-//   LucideIcon,
-//   MapPin,
-//   Sun,
-//   Truck,
-//   Utensils,
-//   Warehouse,
-// } from "lucide-react-native";
-
 import {
   View,
   Text,
@@ -25,23 +5,27 @@ import {
   Image,
   Pressable,
   StatusBar,
+  Alert,
 } from "react-native";
 import { Route, router } from "expo-router";
-import LucidIcons from "~/components/LucidIcons";
 import {
   Box,
   CloudSunIcon,
   Info,
   Leaf,
   LucideIcon,
+  LucideLeafyGreen,
   MapPin,
   Recycle,
   Sun,
   Truck,
+  User,
   Users,
+  Warehouse,
 } from "lucide-react-native";
 import { useGlobalContext } from "~/Context/ContextProvider";
 import { useTranslation } from "react-i18next";
+import LucidIcons from "~/lib/LucidIcons";
 
 const Dashboard = () => {
   const CardItems: {
@@ -87,11 +71,40 @@ const Dashboard = () => {
       description: "Our mission and goals",
     },
   ];
+  const { user } = useGlobalContext();
+
+  const getRoleDetails = () => {
+    switch (user?.user?.role.toLowerCase()) {
+      case "farmer":
+        return {
+          title: "Farmer Dashboard",
+          description:
+            "Efficiently manage your crops, monitor inventory, and discover nearby storage facilities.",
+        };
+      case "customer":
+        return {
+          title: "Customer Hub",
+          description:
+            "Browse a variety of crops, make purchases, and connect directly with farmers.",
+        };
+      case "storage":
+        return {
+          title: "Storage Manager Portal",
+          description:
+            "Oversee inventory storage, track stock levels, and assist farmers with secure storage solutions.",
+        };
+      default:
+        return {
+          title: "Welcome to Feed4Me!",
+          description:
+            "Explore our platform to manage your agricultural needs.",
+        };
+    }
+  };
 
   const AVATAR_URI =
     "https://i.pinimg.com/originals/ef/a2/8d/efa28d18a04e7fa40ed49eeb0ab660db.jpg";
 
-  const { user } = useGlobalContext();
   const { t } = useTranslation();
 
   return (
@@ -116,9 +129,27 @@ const Dashboard = () => {
             <Text className="text-xl font-semibold">{t(user.user?.name)}</Text>
           </View>
         </View>
-        {/* <Pressable className="bg-slate-50rounded-full p-3 w-[40] h-[40] flex item-center justify-center">
-          <LucidIcons IconName={LucideLeafyGreen} size={20} color="green" />
-        </Pressable> */}
+        <Pressable
+          onPress={() =>
+            Alert.alert(
+              t(getRoleDetails().title),
+              t(getRoleDetails().description)
+            )
+          }
+          className="bg-slate-50rounded-full p-3 w-[40] h-[40] flex item-center justify-center"
+        >
+          <LucidIcons
+            IconName={
+              user?.user?.role === "customer"
+                ? User
+                : user?.user?.role === "storage"
+                ? Warehouse
+                : LucideLeafyGreen
+            }
+            size={20}
+            color="green"
+          />
+        </Pressable>
       </Pressable>
 
       <View className="border border-muted p-3 rounded-xl m-2 mx-5">
@@ -142,7 +173,7 @@ const Dashboard = () => {
         <Text className="pb-2">Hourly forcast</Text>
         <ScrollView
           horizontal={true}
-          contentContainerClassName="flex justify-between items-start flex-row flex-wrap bg-secondary/30 my-2 gap-3"
+          contentContainerClassName="flex justify-between items-start flex-row flex-wrap my-2 gap-3"
         >
           <View className="flex justify-center items-center flex-wrap m-1 rounded-xl">
             <LucidIcons IconName={Sun} size={25} strokeWidth={1.5} />

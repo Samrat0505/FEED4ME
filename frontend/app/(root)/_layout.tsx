@@ -25,7 +25,7 @@ const Layout = () => {
     },
     {
       route: "(storage)/Storage",
-      name: "Storage",
+      name: "Storage Management",
       headerShown: false,
     },
     {

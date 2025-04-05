@@ -1,57 +1,138 @@
-import { View, ScrollView, Pressable } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-
 import React from "react";
-import { router } from "expo-router";
-import { Text } from "~/components/ui/text";
-import LucidIcons from "~/components/LucidIcons";
-import { InfoIcon } from "lucide-react-native";
-import { useTranslation } from "react-i18next";
+import { View, Text, ScrollView, SafeAreaView, Pressable } from "react-native";
+import { ArrowLeft, Info, ChevronRight, Gift } from "lucide-react-native";
 
-const Waste = () => {
-  const { t } = useTranslation();
-  return (
-    <ScrollView className="flex-1">
-      <View className="flex item-center justify-center p-5 rounded-xl border border-muted my-1 mx-3 flex-row gap-3">
-        <LucidIcons IconName={InfoIcon} />
-        <Text className="text-xl font-bold">{t("Report Food Waste")}</Text>
-      </View>
+// ✅ Define TypeScript types
+interface NGO {
+  id: number;
+  name: string;
+  description: string;
+  distance: string;
+}
 
-      <View className="p-5 rounded-xl my-1 border border-muted mx-3">
-        <Text className="text-xl font-bold text-gray-800 mb-3">
-          {t("Nearby NGO Partnerships")}
-        </Text>
-        {[
-          "Food Rescue Org",
-          "Green Earth Initiative",
-          "Zero Hunger Project",
-        ].map((ngo, index) => (
-          <View
-            key={index}
-            className="flex-row items-center justify-between py-3"
-          >
-            <Text className="text-lg text-gray-700">{t(ngo)}</Text>
-            <Ionicons name="chevron-forward" size={24} color="#666" />
-          </View>
-        ))}
-      </View>
+interface WasteStats {
+  totalReported: number;
+  foodWasteSaved: string;
+  peopleHelped: number;
+  co2Reduced: string;
+}
 
-      <View className="p-5 rounded-xl my-1 border border-muted mx-3">
-        <Text className="text-xl font-bold text-gray-800 mb-2">
-          {t("Food Redistribution")}
-        </Text>
-        <Text className="text-gray-600 mb-3">
-          {t("Donate surplus food to those in need")}
-        </Text>
-        <Pressable className="bg-green-600 py-3 rounded-lg flex-row items-center justify-center">
-          <Ionicons name="gift" size={24} color="#fff" className="mr-2" />
-          <Text className="text-white text-lg font-bold">
-            {t("Donate Now")}
-          </Text>
-        </Pressable>
-      </View>
-    </ScrollView>
-  );
+// ✅ Dummy Data
+const ngoPartnerships: NGO[] = [
+  {
+    id: 1,
+    name: "Food Rescue Org",
+    description: "Rescuing surplus food from restaurants and events",
+    distance: "1.2 km",
+  },
+  {
+    id: 2,
+    name: "Green Earth Initiative",
+    description: "Promoting sustainable waste management practices",
+    distance: "2.5 km",
+  },
+  {
+    id: 3,
+    name: "Zero Hunger Project",
+    description: "Fighting hunger through food redistribution",
+    distance: "3.7 km",
+  },
+  {
+    id: 4,
+    name: "EcoWaste Solutions",
+    description: "Innovative approaches to waste reduction",
+    distance: "4.1 km",
+  },
+];
+
+const wasteStats: WasteStats = {
+  totalReported: 245,
+  foodWasteSaved: "1,230 kg",
+  peopleHelped: 890,
+  co2Reduced: "3.5 tons",
 };
 
-export default Waste;
+export default function WasteManagementScreen() {
+  return (
+    <SafeAreaView className="flex-1 bg-white">
+      <ScrollView className="flex-1 px-4">
+        {/* ✅ Report Food Waste */}
+        <Pressable
+          className="flex-row items-center gap-3 p-4 mt-4 bg-white border border-muted rounded-lg"
+          onPress={() => console.log("Report food waste")}
+        >
+          <Info stroke="#000" width={24} height={24} />
+          <Text className="text-lg font-medium text-gray-900">
+            Report Food Waste
+          </Text>
+        </Pressable>
+
+        {/* ✅ Your Impact */}
+        <View className="mt-6 p-4 bg-gray-100 rounded-lg">
+          <Text className="text-lg font-semibold text-gray-900 mb-3">
+            Your Impact
+          </Text>
+          <View className="flex-row flex-wrap justify-between">
+            {Object.entries(wasteStats).map(([key, value]) => (
+              <View
+                key={key}
+                className="w-[48%] bg-white p-3 mb-3 rounded-lg shadow-sm items-center"
+              >
+                <Text className="text-xl font-bold text-green-600">
+                  {value}
+                </Text>
+                <Text className="text-xs text-gray-500">
+                  {key.replace(/([A-Z])/g, " $1").trim()}
+                </Text>
+              </View>
+            ))}
+          </View>
+        </View>
+
+        {/* ✅ NGO Partnerships */}
+        <View className="mt-6">
+          <Text className="text-lg font-semibold text-gray-900 mb-3">
+            Nearby NGO Partnerships
+          </Text>
+          {ngoPartnerships.map((ngo) => (
+            <Pressable
+              key={ngo.id}
+              className="bg-white border border-muted rounded-lg mb-3 p-4 flex-row justify-between items-center"
+              onPress={() => console.log(`Selected NGO: ${ngo.name}`)}
+            >
+              <View>
+                <Text className="text-base font-medium text-gray-900">
+                  {ngo.name}
+                </Text>
+                <Text className="text-sm text-gray-500">{ngo.description}</Text>
+                <Text className="text-xs font-medium text-green-600">
+                  {ngo.distance}
+                </Text>
+              </View>
+              <ChevronRight stroke="#6B7280" width={24} height={24} />
+            </Pressable>
+          ))}
+        </View>
+
+        {/* ✅ Food Redistribution */}
+        <View className="mt-6 mb-10">
+          <Text className="text-lg font-semibold text-gray-900">
+            Food Redistribution
+          </Text>
+          <Text className="text-sm text-gray-500 mb-4">
+            Donate surplus food to those in need
+          </Text>
+          <Pressable
+            className="flex-row items-center justify-center bg-green-600 rounded-lg py-4 gap-2"
+            onPress={() => console.log("Donate now")}
+          >
+            <Gift stroke="#FFF" width={24} height={24} />
+            <Text className="text-white text-base font-semibold">
+              Donate Now
+            </Text>
+          </Pressable>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+}

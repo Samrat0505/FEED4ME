@@ -1,8 +1,8 @@
 import { View, Text, ScrollView, Image, StatusBar } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import LucidIcons from "~/components/LucidIcons";
 import { Sprout } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
+import LucidIcons from "~/lib/LucidIcons";
 
 const About = () => {
   const { t } = useTranslation();
