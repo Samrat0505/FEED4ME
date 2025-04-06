@@ -1,11 +1,12 @@
 import {
   ActivityIndicator,
+  Pressable,
   ScrollView,
   ToastAndroid,
   View,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { getStorageDetailsByID, Inventory, purchaseInventory } from "~/lib/Api";
 import { useGlobalContext } from "~/Context/ContextProvider";
 import { Button } from "~/components/ui/button";
@@ -13,18 +14,31 @@ import { Text } from "~/components/ui/text";
 import { Input } from "~/components/ui/input";
 import { Box } from "lucide-react-native";
 import LucidIcons from "~/lib/LucidIcons";
+import { getFarmerProfile } from  "~/lib/Api";
+import { User } from "~/lib/Types";
 
 const StorageDetails = () => {
+  const router = useRouter();
   const { storage } = useLocalSearchParams();
   const { user } = useGlobalContext();
   const [details, setDetails] = useState<Inventory | null>(null);
+  const [owner, setOwner] = useState<string | null>(null);
   const [remainingPercentage, setremainingPercentage] = useState<number>(0);
   const [purchasedQuantity, setpurchasedQuantity] = useState<number>(0);
   const [purchaseLoading, setpurchaseLoading] = useState<boolean>(false);
   const [detailsLoading, setdetailsLoading] = useState<boolean>(false);
+  const [userData, setUserData] = useState<User | null>(null);
   useEffect(() => {
-    setDetails(JSON.parse(`${storage}`) as Inventory);
+    const temp = JSON.parse(`${storage}`) as Inventory;
+    // setDetails(JSON.parse(`${storage}`) as Inventory);
+    setDetails(temp);
+    //67d55ffadd85cc341df87fdc
+    //67d55ffadd85cc341df87fdc
+    console.log("inside use effect")
+    console.log(temp)
+    setOwner(temp.owner);
   }, [storage]);
+
 
   useEffect(() => {
     details &&
@@ -35,6 +49,17 @@ const StorageDetails = () => {
       );
   }, [details]);
 
+    useEffect(() => {
+      (async () => {
+        if (user?.user.role === "farmer") {
+          const data = await getFarmerProfile(user.token);
+          if (data) {
+            setUserData(data);
+          }
+        }
+      })();
+    }, [user]);
+
   if (!details) return <View />;
 
   if (user.user.role === "storage")
@@ -43,7 +68,6 @@ const StorageDetails = () => {
         <Stack.Screen
           options={{ headerShown: true, title: `${details.name}` }}
         />
-
         <View className="p-3">
           <View className="p-5 border border-slate-200 rounded-lg">
             <View className="flex justify-between text-sm mb-2">
@@ -232,6 +256,26 @@ const StorageDetails = () => {
             <View className="my-1">
               <Text className="text-xs text-slate-500">Location</Text>
               <Text className="font-medium">{details.location.address}</Text>
+            </View>
+            <View className="my-1">
+              <Pressable
+                onPress={() => {
+                  console.log("inside the on press function")
+                  const recieverId = owner;
+                  const senderId = userData?._id;
+                  console.log(recieverId, senderId)
+                  const chatId = String([senderId, recieverId].sort().join("-"));
+                  router.push({
+                    pathname: '/chat/[chatId]',
+                    params: { chatId, senderId, recieverId },
+                  });
+                }}
+                className="bg-emerald-500 py-2 px-4 rounded-lg items-center"
+              >
+                <Text className="text-white font-semibold">
+                  Chat with Owner
+                </Text>
+              </Pressable>
             </View>
           </View>
 

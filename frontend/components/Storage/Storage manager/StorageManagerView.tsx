@@ -109,6 +109,16 @@ const StorageManagerView = () => {
                     <LucidIcons IconName={Map} />
                     <Text>{t("Map View")}</Text>
                   </Button>
+                  <Button
+                    className="my-5 mx-1 flex items-center justify-center gap-3 flex-row"
+                    variant={"outline"}
+                    onPress={() => {
+                      router.push("/chat");
+                    }}
+                  >
+                    <LucidIcons IconName={Map} />
+                    <Text>{t("Chat with Farmers")}</Text>
+                  </Button>
                   {Inventories.map((unit: Inventory, index) => {
                     return (
                       <Pressable

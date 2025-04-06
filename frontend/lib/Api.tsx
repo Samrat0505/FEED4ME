@@ -1,7 +1,8 @@
 import axios from "axios";
 import { ToastAndroid } from "react-native";
-import { role, User } from "./Types";
-const BASE_URL = "https://feed4me-server.onrender.com/api";
+import { role, User, IncomingMessage, Chat } from "./Types";
+// const BASE_URL = "https://feed4me-server.onrender.com/api";
+const BASE_URL = "http://15.206.166.59:3000/api"
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
@@ -57,6 +58,8 @@ interface Crop {
   MRP: number;
   stock: number;
 }
+
+
 
 // 🔹 User Authentication Functions
 export const registerUser = async (
@@ -308,3 +311,29 @@ export const purchaseInventory = async (
     return null;
   }
 };
+
+// 🔹 Chat Management Functions
+
+export const getMyMessages = async (
+  roomId: string
+) => {
+  try{
+    const response = await axios.get(`${BASE_URL}/message/${roomId}`);
+    return response.data.data as IncomingMessage[];
+  }catch (error){
+    handleError(error, "Failed to fetch messages.");
+    return null;
+  }
+}
+
+export const getChatList = async (
+  userId : string
+) => {
+  try{
+    const response = await axios.get(`${BASE_URL}/message/chats/${userId}`)
+    return response.data.data as Chat[];
+  }catch(error){
+    handleError(error, "Failed to fetch messages.");
+    return null;
+  }
+}
