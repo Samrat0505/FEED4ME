@@ -1,6 +1,5 @@
 import {
   View,
-  Text,
   ScrollView,
   Pressable,
   ActivityIndicator,
@@ -8,16 +7,16 @@ import {
   StatusBar,
 } from "react-native";
 import { router, Stack } from "expo-router";
-import { ArrowLeft, Box, Map, Plus } from "lucide-react-native";
+import { ArrowLeft, Box, Map, MessageSquare, Plus } from "lucide-react-native";
 import { useGlobalContext } from "~/Context/ContextProvider";
 import { useEffect, useState } from "react";
 import { getMyInventories, Inventory } from "~/lib/Api";
 import { Button } from "~/components/ui/button";
 import ModelComponent from "~/components/ModelComponent";
-import AddInventory from "~/components/Storage/Storage manager/AddInventory";
 import MapView, { Marker } from "react-native-maps";
 import { useTranslation } from "react-i18next";
 import LucidIcons from "~/lib/LucidIcons";
+import { Text } from "~/components/ui/text";
 
 const StorageManagerView = () => {
   const { t } = useTranslation();
@@ -25,8 +24,6 @@ const StorageManagerView = () => {
   const { user } = useGlobalContext();
   const [Inventories, setInventories] = useState<Inventory[]>([]);
   const [InventoryLoading, setInventoryLoading] = useState<boolean>(true);
-  const [addNewInventoryModel, setaddNewInventoryModel] =
-    useState<boolean>(false);
   const [ismapViewModel, setismapViewModel] = useState<boolean>(false);
   const [markerDoubleTap, setmarkerDoubleTap] = useState<boolean>(false);
   const [totalCapacity, setTotalCapacity] = useState<number>(0);
@@ -37,7 +34,7 @@ const StorageManagerView = () => {
   }, []);
 
   const fetchMyInventories = async () => {
-    const Inventories = await getMyInventories(user.token);
+    const Inventories = await getMyInventories(user.token, user.user._id);
     Inventories && setInventories(Inventories);
     setInventoryLoading(false);
   };
@@ -55,7 +52,6 @@ const StorageManagerView = () => {
 
   return (
     <>
-      <Stack.Screen options={{ headerShown: true }} />
       {InventoryLoading ? (
         <View className="flex items-center justify-center h-screen">
           <LucidIcons IconName={Box} size={50} strokeWidth={1} />
@@ -66,6 +62,15 @@ const StorageManagerView = () => {
         </View>
       ) : (
         <>
+          <Button
+            className="absolute bottom-1 right-1 m-2 mt-3 flex items-center justify-center gap-3 flex-row z-50"
+            onPress={() => {
+              router.push("/chat");
+            }}
+          >
+            <LucidIcons IconName={MessageSquare} color="white" />
+            <Text>{t("Chat")}</Text>
+          </Button>
           <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
             <View className="flex-row justify-between px-3">
               {[
@@ -101,23 +106,13 @@ const StorageManagerView = () => {
                 <>
                   <Button
                     className="my-5 mx-1 flex items-center justify-center gap-3 flex-row"
-                    variant={"outline"}
+                    variant={"secondary"}
                     onPress={() => {
                       setismapViewModel(true);
                     }}
                   >
                     <LucidIcons IconName={Map} />
                     <Text>{t("Map View")}</Text>
-                  </Button>
-                  <Button
-                    className="my-5 mx-1 flex items-center justify-center gap-3 flex-row"
-                    variant={"outline"}
-                    onPress={() => {
-                      router.push("/chat");
-                    }}
-                  >
-                    <LucidIcons IconName={Map} />
-                    <Text>{t("Chat with Farmers")}</Text>
                   </Button>
                   {Inventories.map((unit: Inventory, index) => {
                     return (
@@ -126,9 +121,7 @@ const StorageManagerView = () => {
                         className="p-5 rounded-xl my-1 border border-muted"
                         onPress={() => {
                           router.push(
-                            `/(root)/(storage)/StorageDetails?storage=${JSON.stringify(
-                              unit
-                            )}`
+                            `/(root)/(storage)/StorageDetails?storageId=${unit._id}&storageName=${unit?.name}`
                           );
                         }}
                       >
@@ -176,26 +169,16 @@ const StorageManagerView = () => {
                 </>
               )}
               <Button
-                onPress={() => setaddNewInventoryModel(true)}
+                onPress={() => router.push("/(root)/(storage)/AddNewInventory")}
                 variant={"outline"}
                 className="flex flex-row gap-3 items-center justify-center my-5"
               >
                 <LucidIcons IconName={Plus} />
                 <Text>{t("Add more Inventories")}</Text>
               </Button>
+              <View className="p-10" />
             </View>
           </ScrollView>
-          <ModelComponent
-            isVisible={addNewInventoryModel}
-            setIsVisible={setaddNewInventoryModel}
-            children={
-              <AddInventory
-                token={user.token}
-                setaddNewInventoryModel={setaddNewInventoryModel}
-                fetchMyInventories={fetchMyInventories}
-              />
-            }
-          />
 
           {Inventories.length !== 0 && (
             <ModelComponent
@@ -237,9 +220,7 @@ const StorageManagerView = () => {
                             if (markerDoubleTap) {
                               setismapViewModel(false);
                               router.push(
-                                `/(root)/(storage)/StorageDetails?storage=${JSON.stringify(
-                                  marker
-                                )}`
+                                `/(root)/(storage)/StorageDetails?storageId=${marker._id}&storageName=${marker?.name}`
                               );
                               setmarkerDoubleTap(false);
                             }

@@ -24,20 +24,27 @@ import {
 import * as Location from "expo-location";
 import { MapPin } from "lucide-react-native";
 import LucidIcons from "~/lib/LucidIcons";
+import { role } from "~/lib/Types";
 
 type UserDetails = {
   name: string;
   email: string;
+  ngo_RegNo: string;
+  contact_person: string;
+  contact_person_mobile: string;
+  focus_area: string;
+  ngo_website: string;
   MobileNo: string;
   password: string;
+  ngo_establishment: string;
   password1: string;
   age: string;
-  role: "customer" | "farmer" | "storage";
+  role: role;
   location: {
     address: string;
     coordinates: {
       type: "Point";
-      coordinates: [number, number]; // [longitude, latitude]
+      coordinates: [number, number];
     };
   };
 };
@@ -46,10 +53,16 @@ const SignUp = () => {
   const { t } = useTranslation();
   const [value, setValue] = React.useState<UserDetails>({
     name: "",
+    contact_person: "",
+    focus_area: "",
+    ngo_website: "",
     email: "",
+    ngo_establishment: "",
+    contact_person_mobile: "",
     MobileNo: "",
     password: "",
     password1: "",
+    ngo_RegNo: "",
     age: "",
     role: "farmer",
     location: {
@@ -66,6 +79,7 @@ const SignUp = () => {
   const [error, setError] = useState<string | null>(null);
   const [isOTPSent, setIsOtpSent] = useState<boolean>(false);
   const [isLocationloading, setisLocationloading] = useState<boolean>(false);
+  const [otp, setOtp] = useState("");
 
   async function signUpHandler() {
     // Vibrate(isHapticFeedBackEnabled);
@@ -79,12 +93,7 @@ const SignUp = () => {
       return;
     }
 
-    if (
-      value.password === "" ||
-      value.password1 === "" ||
-      value.age === "" ||
-      value.name === ""
-    ) {
+    if (value.password === "" || value.password1 === "" || value.name === "") {
       ToastAndroid.show(t("Fill all required fields"), ToastAndroid.SHORT);
       setError(t("Fill all required fields"));
       return;
@@ -98,6 +107,7 @@ const SignUp = () => {
       setError(t("Please fetch current location"));
       return;
     }
+
     if (value.password1 !== value.password) {
       ToastAndroid.show(t("Passwords do not match!"), ToastAndroid.SHORT);
       setError(t("Passwords do not match!"));
@@ -114,9 +124,30 @@ const SignUp = () => {
         mobile: value.MobileNo,
         name: value.name,
         password: value.password,
+        contact_person: value.contact_person,
+        focus_area: value.focus_area,
+        ngo_website: value.ngo_website,
+        establishment: value.ngo_establishment,
+        contact_person_mobile: value.contact_person_mobile,
+        ngo_RegNo: value.ngo_RegNo,
       });
-      data && setIsOtpSent(true);
-    } catch (error) {
+
+      if (data) {
+        setIsOtpSent(true);
+      } else {
+        ToastAndroid.show(
+          t("Something went wrong. Please try again."),
+          ToastAndroid.SHORT
+        );
+        setError(t("Something went wrong. Please try again."));
+      }
+    } catch (error: any) {
+      const errorMessage =
+        error?.response?.data?.message ||
+        error.message ||
+        t("Registration failed. Please try again.");
+      ToastAndroid.show(errorMessage, ToastAndroid.SHORT);
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -173,9 +204,6 @@ const SignUp = () => {
     }
   };
 
-  //-------------------------------------------------------
-  const [otp, setOtp] = useState("");
-
   const handleVerifyOTP = async () => {
     if (otp.length !== 5) {
       ToastAndroid.show(t("Please enter a 5-digit OTP"), ToastAndroid.SHORT);
@@ -184,7 +212,7 @@ const SignUp = () => {
     setIsLoading(true);
     try {
       const data = await verifyOTP(
-        "farmer",
+        value.role,
         value.MobileNo.length === 10 ? value.MobileNo : value.email,
         otp
       );
@@ -235,30 +263,11 @@ const SignUp = () => {
             <Text className="font-semibold py-5 pt-0 text-muted-foreground">
               {t("create new account account")}
             </Text>
-            {/* <View className="flex items-center justify-center"> */}
-            {/* <Image
-                source={require("assets/Images/LogIn.svg")}
-                style={{ width: width - 60, height: width - 60 }}
-                contentFit="contain"
-              /> */}
-            {/* </View> */}
-
-            <Text className="text-sm font-semibold">
-              {t("Enter your name")}
-            </Text>
-            <Input
-              placeholder="John doe"
-              onChangeText={(text) => setValue({ ...value, name: text })}
-              textContentType="name"
-            />
 
             <Text className="text-sm font-semibold">{t("Role")}</Text>
             <Select
               onValueChange={(text) => {
-                const selectedRole = text?.value as
-                  | "customer"
-                  | "farmer"
-                  | "storage";
+                const selectedRole = text?.value as role;
                 if (selectedRole) {
                   setValue((prev) => ({ ...prev, role: selectedRole }));
                 }
@@ -272,15 +281,11 @@ const SignUp = () => {
               </SelectTrigger>
               <SelectContent className="w-[90%] mt-2">
                 <SelectGroup>
-                  <SelectItem label={t("Farmer")} value="farmer">
-                    {t("Farmer")}
-                  </SelectItem>
-                  <SelectItem label={t("Customer")} value="customer">
-                    {t("Customer")}
-                  </SelectItem>
-                  <SelectItem label={t("Storage Manager")} value="storage">
-                    {t("Storage Manager")}
-                  </SelectItem>
+                  {["farmer", "customer", "storage", "ngo"].map((val) => (
+                    <SelectItem key={val} label={t(val)} value={val}>
+                      <Text>{t(val)}</Text>
+                    </SelectItem>
+                  ))}
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -288,38 +293,124 @@ const SignUp = () => {
               *{t("If no role is selected, 'Farmer' will be set as default.")}
             </Text>
 
+            {value.role === "ngo" ? (
+              <>
+                <Text className="text-sm font-semibold">
+                  {t("Name of Ngo")}
+                </Text>
+                <Input
+                  placeholder="eg: sub ka saath"
+                  onChangeText={(text) => setValue({ ...value, name: text })}
+                />
+                <Text className="text-sm font-semibold">
+                  {t("Name of person in contact")}
+                </Text>
+                <Input
+                  placeholder="John doe"
+                  onChangeText={(text) =>
+                    setValue({ ...value, contact_person: text })
+                  }
+                  textContentType="name"
+                />
+                <Text className="text-sm font-semibold">
+                  {t("Contect number of person")}
+                </Text>
+                <Input
+                  placeholder="+91 9678908798"
+                  keyboardType="numeric"
+                  maxLength={10}
+                  onChangeText={(text) =>
+                    setValue({ ...value, contact_person_mobile: text })
+                  }
+                />
+                <Text className="text-sm font-semibold">
+                  {t("Establishment year of Ngo")}
+                </Text>
+                <Input
+                  placeholder="eg: 1992"
+                  keyboardType="number-pad"
+                  maxLength={4}
+                  onChangeText={(text) =>
+                    setValue({ ...value, ngo_establishment: text })
+                  }
+                />
+                <Text className="text-sm font-semibold">
+                  {t("Ngo Focus area")}
+                </Text>
+                <Input
+                  placeholder="eg. food, poverty, women empowerment etc"
+                  onChangeText={(text) =>
+                    setValue({ ...value, focus_area: text })
+                  }
+                />
+                <Text className="text-sm font-semibold">
+                  {t("website (Optional)")}
+                </Text>
+                <Input
+                  placeholder="eg. www.something.com"
+                  onChangeText={(text) =>
+                    setValue({ ...value, ngo_website: text })
+                  }
+                />
+              </>
+            ) : (
+              <>
+                <Text className="text-sm font-semibold">
+                  {t("Enter your name")}
+                </Text>
+                <Input
+                  placeholder="John doe"
+                  onChangeText={(text) => setValue({ ...value, name: text })}
+                  textContentType="name"
+                />
+
+                <Text className="text-sm font-semibold">
+                  {t("Enter your age")}
+                </Text>
+                <Input
+                  placeholder="24"
+                  keyboardType="numeric"
+                  maxLength={2}
+                  onChangeText={(text) => setValue({ ...value, age: text })}
+                />
+              </>
+            )}
+
             <View className="bg-slate-100 p-3 flex gap-3 dark:bg-slate-800 rounded-lg">
               <Text className="text-sm font-semibold">
-                {t("Enter your email")}
+                {value.role === "ngo"
+                  ? t("Official email of ngo")
+                  : t("Enter your email")}
               </Text>
-
               <Input
                 placeholder="example@xyz.com"
-                onChangeText={(text: string) =>
-                  setValue({ ...value, email: text })
-                }
+                onChangeText={(text) => setValue({ ...value, email: text })}
               />
-              <Text className="text-center"> Or </Text>
+
+              <Text className="text-center">Or</Text>
+
               <Text className="text-sm font-semibold">
-                {t("Enter your Phone no")}
+                {value.role === "ngo"
+                  ? t("Official registration number of ngo")
+                  : t("Enter your Phone no")}
               </Text>
               <Input
                 placeholder="+91 9678908798"
                 keyboardType="numeric"
                 maxLength={10}
-                onChangeText={(text: string) =>
-                  setValue({ ...value, MobileNo: text })
-                }
+                onChangeText={(text) => setValue({ ...value, MobileNo: text })}
               />
             </View>
 
             <Text className="text-sm font-semibold">
-              {t("Get your current location")}
+              {value.role === "ngo"
+                ? t("Get location of ngo")
+                : t("Get your current location")}
             </Text>
             {value?.location?.address ? (
               <Button
-                variant={"outline"}
-                onPress={() => {
+                variant="outline"
+                onPress={() =>
                   setValue((prev) => ({
                     ...prev,
                     location: {
@@ -329,54 +420,48 @@ const SignUp = () => {
                         coordinates: [0, 0],
                       },
                     },
-                  }));
-                }}
+                  }))
+                }
               >
-                <Text>{value?.location?.address}</Text>
+                <Text>{value.location.address}</Text>
               </Button>
             ) : (
               <Button
                 disabled={isLocationloading}
-                onPress={() => getLocation()}
-                variant={"outline"}
+                onPress={getLocation}
+                variant="outline"
               >
-                {isLocationloading ? (
-                  <View className="flex justify-center item-center gap-3 flex-row">
-                    <ActivityIndicator animating />
-                    <Text className="text-center">
-                      {t("Fetching current location")}...
-                    </Text>
-                  </View>
-                ) : (
-                  <View className="flex justify-center item-center gap-3 flex-row">
-                    <LucidIcons IconName={MapPin} />
-                    <Text>{t("Get current Location")}</Text>
-                  </View>
-                )}
+                <View className="flex justify-center items-center gap-3 flex-row">
+                  {isLocationloading ? (
+                    <>
+                      <ActivityIndicator animating />
+                      <Text>{t("Fetching current location")}...</Text>
+                    </>
+                  ) : (
+                    <>
+                      <LucidIcons IconName={MapPin} />
+                      <Text>{t("Get current Location")}</Text>
+                    </>
+                  )}
+                </View>
               </Button>
             )}
 
-            <Text className="text-sm font-semibold">{t("Enter your age")}</Text>
-            <Input
-              placeholder="24"
-              keyboardType="numeric"
-              maxLength={2}
-              onChangeText={(text) => setValue({ ...value, age: text })}
-            />
             <Text className="text-sm font-semibold">{t("Enter password")}</Text>
             <Input
               placeholder="******"
               onChangeText={(text) => setValue({ ...value, password: text })}
-              secureTextEntry={true}
+              secureTextEntry
               textContentType="password"
             />
+
             <Text className="text-sm font-semibold">
               {t("Re-Enter password")}
             </Text>
             <Input
               placeholder="******"
               onChangeText={(text) => setValue({ ...value, password1: text })}
-              secureTextEntry={true}
+              secureTextEntry
               textContentType="password"
             />
 
@@ -386,21 +471,15 @@ const SignUp = () => {
               onPress={signUpHandler}
             >
               <Text>
-                {isLoading ? (
-                  <ActivityIndicator animating />
-                ) : (
-                  `${t("Sign up")}`
-                )}
+                {isLoading ? <ActivityIndicator animating /> : t("Sign up")}
               </Text>
             </Button>
 
-            <View className="mb-5">
-              {!!error && (
-                <View className="w-full p-4 pt-0">
-                  <Text className="text-red-500 text-center">{error}</Text>
-                </View>
-              )}
-            </View>
+            {!!error && (
+              <View className="w-full p-4 pt-0">
+                <Text className="text-red-500 text-center">{error}</Text>
+              </View>
+            )}
           </View>
         )}
       </ScrollView>

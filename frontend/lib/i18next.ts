@@ -56,7 +56,6 @@ const fetchTranslation = async (
       )}&langpair=${currentLang}|${targetLang}`
     );
     const data = await response.json();
-    console.log("api fetched");
     return data?.responseData?.translatedText || text;
   } catch (error) {
     console.error("Translation API error:", error);

@@ -1,7 +1,13 @@
 import BottomSheet from "@gorhom/bottom-sheet";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
-import { Box, ChevronDown, Languages } from "lucide-react-native";
+import {
+  Box,
+  ChevronDown,
+  Languages,
+  LeafyGreenIcon,
+  Sprout,
+} from "lucide-react-native";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -36,8 +42,7 @@ import LucidIcons from "~/lib/LucidIcons";
 const ProfileScreen = () => {
   const { t, i18n } = useTranslation();
   const { user, setUser } = useGlobalContext();
-  const [userData, setUserData] = useState<User | null>(null);
-  const [isLoading, setisLoading] = useState<boolean>(true);
+
   const [isLogoutModel, setisLogoutModel] = useState<boolean>(false);
 
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -51,135 +56,6 @@ const ProfileScreen = () => {
     { code: "en", label: "English" },
     { code: "hi", label: "हिन्दी" },
   ];
-
-  useEffect(() => {
-    (async () => {
-      if (user?.user.role === "farmer") {
-        const data = await getFarmerProfile(user.token);
-        if (data) {
-          setUserData(data);
-          setisLoading(false);
-        }
-      } else {
-        setisLoading(false);
-      }
-    })();
-  }, [user]);
-
-  const tabsData = useMemo(() => {
-    return [
-      { name: t("Purchased Inventory") },
-      { name: t("Crops") },
-      { name: t("Customers") },
-    ];
-  }, [i18n.language]);
-
-  const TabPages = useMemo(() => {
-    return [
-      <ScrollView>
-        <View className="p-3">
-          {isLoading ? (
-            <View className="flex flex-row gap-2 justify-center my-9">
-              <ActivityIndicator animating />
-              <Text>{t("Loading purchased storage...")}</Text>
-            </View>
-          ) : (
-            <>
-              {userData?.inventory.length === 0 ? (
-                <Text className="text-center my-9">
-                  {t("No Tnventory purchased yet")}
-                </Text>
-              ) : (
-                <>
-                  {userData?.inventory.map((unit: any, index) => {
-                    return (
-                      <Pressable
-                        key={index}
-                        className="p-5 rounded-xl my-1 border border-muted"
-                      >
-                        <View className="flex-row justify-between items-center my-1">
-                          <View className="flex-row items-center">
-                            <LucidIcons
-                              IconName={Box}
-                              size={24}
-                              color="green"
-                            />
-                            <Text className="text-lg font-bold ml-3 text-gray-800">
-                              {unit.name}
-                            </Text>
-                          </View>
-                          <View className="bg-green-100 px-3 py-1 rounded-full">
-                            <Text className="text-green-700 font-bold text-sm">
-                              Active
-                            </Text>
-                          </View>
-                        </View>
-                        <View className="space-y-2 mt-2">
-                          <Text className="text-sm text-gray-600">
-                            Crop type: {unit.crop.toLocaleUpperCase()}
-                          </Text>
-                          <Text className="text-sm text-gray-600">
-                            Area reserved : {unit.area}
-                          </Text>
-
-                          <Text className="text-sm text-gray-600">
-                            Area cost : {unit.cost} INR
-                          </Text>
-                          <Text className="text-sm text-gray-600">
-                            owner : {unit.owner}
-                          </Text>
-                        </View>
-                      </Pressable>
-                    );
-                  })}
-                </>
-              )}
-            </>
-          )}
-        </View>
-      </ScrollView>,
-      <ScrollView>
-        <View className="p-3">
-          {isLoading ? (
-            <View className="flex flex-row gap-2 justify-center my-9">
-              <ActivityIndicator animating />
-              <Text>{t("Loading crops...")}</Text>
-            </View>
-          ) : (
-            <View>
-              {userData?.crops.length === 0 ? (
-                <Text className="text-center my-9">
-                  {t("No crops registered yet")}
-                </Text>
-              ) : (
-                <Text>{JSON.stringify(userData?.crops, null, 5)}</Text>
-              )}
-            </View>
-          )}
-        </View>
-      </ScrollView>,
-      <ScrollView>
-        <View className="p-3">
-          {isLoading ? (
-            <View className="flex flex-row gap-2 justify-center my-9">
-              <ActivityIndicator animating />
-              <Text>{t("Loading customers...")}</Text>
-            </View>
-          ) : (
-            <>
-              {userData?.customers.length === 0 ? (
-                <Text className="text-center my-9">
-                  {t("No customers yet")}
-                </Text>
-              ) : (
-                <Text>{JSON.stringify(userData?.customers, null, 5)}</Text>
-              )}
-            </>
-          )}
-        </View>
-      </ScrollView>,
-    ];
-  }, [userData, i18n.language]);
 
   return (
     <>
@@ -203,8 +79,8 @@ const ProfileScreen = () => {
           <Text className="text-gray-600">{user?.user?.email}</Text>
         </TouchableOpacity>
         <Button
-          variant={"ghost"}
-          className="flex flex-row gap-3 items-center justify-center mx-7 my-5 mt-3"
+          variant={"outline"}
+          className="flex flex-row gap-3 items-center justify-center m-5 mb-0"
           onPress={() => bottomSheetRef.current?.expand()}
         >
           <LucidIcons IconName={Languages} />
@@ -215,26 +91,16 @@ const ProfileScreen = () => {
           </Text>
           <LucidIcons IconName={ChevronDown} />
         </Button>
-        {user?.user?.role === "farmer" ? (
-          <TabComponent tabsData={tabsData} Pages={TabPages} />
-        ) : (
-          <>
-            <Button
-              variant={"destructive"}
-              className="mx-3 mt-3"
-              onPress={() => {
-                setUser(null);
-                AsyncStorage.removeItem("user");
-                router.replace("/MainScreen");
-                setisLogoutModel(false);
-              }}
-            >
-              <Text className="text-white text-center font-semibold">
-                {t("Log Out")}
-              </Text>
-            </Button>
-          </>
-        )}
+
+        <Button
+          variant={"destructive"}
+          className="mx-5 mt-3"
+          onPress={() => setisLogoutModel(true)}
+        >
+          <Text className="text-white text-center font-semibold">
+            {t("Log Out")}
+          </Text>
+        </Button>
       </View>
       <BottomSheetComponent
         ref={bottomSheetRef}

@@ -24,7 +24,7 @@ type UserDetails = {
   email: string;
   password: string;
   mobileNo: string;
-  role: "customer" | "farmer" | "storage";
+  role: "customer" | "farmer" | "storage" | "ngo";
 };
 const Login = () => {
   const { t } = useTranslation();
@@ -90,7 +90,8 @@ const Login = () => {
               const selectedRole = text?.value as
                 | "customer"
                 | "farmer"
-                | "storage";
+                | "storage"
+                | "ngo";
               if (selectedRole) {
                 setValue((prev) => ({ ...prev, role: selectedRole }));
               }
@@ -113,6 +114,9 @@ const Login = () => {
                 <SelectItem label={t("Storage Manager")} value="storage">
                   {t("Storage Manager")}
                 </SelectItem>
+                <SelectItem label={t("Ngo")} value="ngo">
+                  {t("Ngo")}
+                </SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
@@ -129,6 +133,7 @@ const Login = () => {
               onChangeText={(text: string) =>
                 setValue({ ...value, email: text })
               }
+              textContentType="emailAddress"
             />
             <Text className="text-center"> Or </Text>
             <Text className="text-sm font-semibold">
@@ -141,6 +146,7 @@ const Login = () => {
               onChangeText={(text: string) =>
                 setValue({ ...value, mobileNo: text })
               }
+              textContentType="password"
             />
           </View>
 
@@ -151,6 +157,7 @@ const Login = () => {
               setValue({ ...value, password: text })
             }
             secureTextEntry={true}
+            textContentType="password"
           />
 
           <Button

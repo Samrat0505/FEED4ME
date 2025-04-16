@@ -15,14 +15,13 @@ import { Text } from "~/components/ui/text";
 import { useGlobalContext } from "~/Context/ContextProvider";
 import LucidIcons from "~/lib/LucidIcons";
 import { LocateFixed } from "lucide-react-native";
+import { router } from "expo-router";
 
-const AddInventory = ({
+const AddNewInventory = ({
   token,
-  setaddNewInventoryModel,
   fetchMyInventories,
 }: {
   token: string;
-  setaddNewInventoryModel: (value: boolean) => void;
   fetchMyInventories: Function;
 }) => {
   const { user } = useGlobalContext();
@@ -43,6 +42,7 @@ const AddInventory = ({
     name: "",
     totalQuantity: 0,
     price: 0,
+    description: "",
     crop: "",
     location: {
       address: "",
@@ -101,10 +101,10 @@ const AddInventory = ({
     };
 
     try {
-      await addNewInventory(data, token);
+      await addNewInventory(data, token, user.user._id);
       ToastAndroid.show("Added sucessfully", ToastAndroid.SHORT);
       fetchMyInventories();
-      setaddNewInventoryModel(false);
+      router.back();
     } catch (error) {
     } finally {
       setisSubmittionLoading(false);
@@ -113,15 +113,21 @@ const AddInventory = ({
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
-      <View className="p-5 flex gap-3">
-        <Text style={styles.title}>Add New Inventory</Text>
-
+      <View className="p-5 pt-2 flex gap-3">
         <Text className="text-sm font-semibold">Enter Inventory Name</Text>
         <Input
           placeholder="Inventory Name"
           value={inventory.name}
           onChangeText={(text) =>
             setInventory((prev) => ({ ...prev, name: text }))
+          }
+        />
+        <Text className="text-sm font-semibold">Inventory description</Text>
+        <Input
+          placeholder="Inventory description"
+          value={inventory.description}
+          onChangeText={(text) =>
+            setInventory((prev) => ({ ...prev, description: text }))
           }
         />
 
@@ -260,7 +266,7 @@ const AddInventory = ({
   );
 };
 
-export default AddInventory;
+export default AddNewInventory;
 
 const styles = StyleSheet.create({
   title: { fontSize: 20, fontWeight: "bold", marginBottom: 10 },

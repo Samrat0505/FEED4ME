@@ -41,6 +41,12 @@
         {
           "locationAlwaysAndWhenInUsePermission": "Allow FEED4ME to use your location."
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "FEED4ME accesses your photos."
+        }
       ]
     ],
     "experiments": {

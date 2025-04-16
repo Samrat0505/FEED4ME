@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -6,186 +6,309 @@ import {
   Dimensions,
   StatusBar,
   ToastAndroid,
+  ScrollView,
+  Pressable,
+  SafeAreaView,
 } from "react-native";
-import MapView, { Marker } from "react-native-maps";
-import { ArrowLeft, RefreshCwIcon } from "lucide-react-native";
-import BottomSheet from "@gorhom/bottom-sheet";
+import { Box, Plus } from "lucide-react-native";
 import { router } from "expo-router";
 import { Text } from "~/components/ui/text";
 import { Button } from "~/components/ui/button";
-import BottomSheetComponent from "~/components/BottomSheetComponent";
-import { getInventoriesNearby, Inventory } from "~/lib/Api";
+import { getFarmerProfile, getMyInventories, Inventory } from "~/lib/Api";
 import { useGlobalContext } from "~/Context/ContextProvider";
 import { useTranslation } from "react-i18next";
 import LucidIcons from "~/lib/LucidIcons";
+import { User } from "~/lib/Types";
+import TabComponent from "~/components/TabComponent";
+import i18n from "~/lib/i18next";
 
 export default function FarmerView() {
   const { t } = useTranslation();
-  const [selectedMarker, setSelectedMarker] = useState<Inventory | null>(null);
-  const [loadingMarkers, setloadingMarkers] = useState<boolean>(true);
-  const [InventoriesNearby, setInventoriesNearby] = useState<Inventory[]>([]);
-  const bottomSheetRef = useRef<BottomSheet>(null);
   const { user } = useGlobalContext();
 
-  const Latitude = user?.user.location.coordinates.coordinates[0] || 28.6139;
-  const Longitude = user?.user.location.coordinates.coordinates[1] || 77.209;
-
-  const [CurrentRegion, setCurrentRegion] = useState<{
-    lan: number;
-    Long: number;
-  }>({ lan: Latitude, Long: Longitude });
-
-  const handleMarkerPress = (marker: Inventory) => {
-    setSelectedMarker(marker);
-    bottomSheetRef.current?.expand();
-  };
-
-  const fetchMarkers = async (lat: number | null, long: number | null) => {
-    setloadingMarkers(true);
-    const data = await getInventoriesNearby(user.token, lat, long);
-    const UniqueArray: Inventory[] = [
-      ...(data ?? []),
-      ...InventoriesNearby,
-    ].filter(
-      (item, index, self) =>
-        index === self.findIndex((obj) => obj._id === item._id)
-    );
-    setInventoriesNearby(UniqueArray);
-    setloadingMarkers(false);
-  };
+  const [isPurchaseInventoryLoading, setisPurchaseInventoryLoading] =
+    useState<boolean>(true);
+  const [isStorageRentLoading, setisStorageRentLoading] =
+    useState<boolean>(true);
+  const [storageRentData, setStorageRentData] = useState<Inventory[]>([]);
+  const [userData, setUserData] = useState<User | null>(null);
+  const [TotalAreaReserved, setTotalAreaReserved] = useState<number>(0);
+  const [TotalAreaAdded, setTotalAreaAdded] = useState<number>(0);
+  const [currentTab, setcurrentTab] = useState<number>(0);
 
   useEffect(() => {
-    fetchMarkers(CurrentRegion.lan, CurrentRegion.Long);
-  }, [CurrentRegion]);
+    (async () => {
+      if (user?.user.role === "farmer") {
+        const data = await getFarmerProfile(user.token);
+        if (data) {
+          setUserData(data);
+          setisPurchaseInventoryLoading(false);
+        }
+      } else {
+        setisPurchaseInventoryLoading(false);
+      }
+    })();
+  }, [user]);
+
+  useEffect(() => {
+    userData?.inventory?.forEach((e: any) => {
+      setTotalAreaReserved((prev) => prev + e.area);
+    });
+    return () => {
+      setTotalAreaReserved(0);
+    };
+  }, [userData?.inventory]);
+
+  useEffect(() => {
+    storageRentData?.forEach((e: Inventory) => {
+      setTotalAreaAdded((prev) => prev + e.totalQuantity);
+    });
+    return () => {
+      setTotalAreaAdded(0);
+    };
+  }, [storageRentData]);
+
+  useEffect(() => {
+    fetchAddedInventories();
+  }, []);
+
+  const fetchAddedInventories = async () => {
+    const Inventories = await getMyInventories(user.token, user.user._id);
+    Inventories && setStorageRentData(Inventories);
+    setisStorageRentLoading(false);
+  };
+
+  const tabsData = useMemo(() => {
+    return [{ name: t("Purchased Inventory") }, { name: t("Rented Storage") }];
+  }, [i18n.language]);
+
+  const TabPages = useMemo(() => {
+    return [
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View className="p-3 pt-0">
+          {isPurchaseInventoryLoading ? (
+            <View className="flex items-center justify-center pt-20">
+              <LucidIcons IconName={Box} size={50} strokeWidth={1} />
+              <View className="flex items-center justify-center p-8 flex-row gap-3">
+                <ActivityIndicator animating />
+                <Text>{t("Loading your Inventories....")}</Text>
+              </View>
+            </View>
+          ) : (
+            <>
+              {userData?.inventory.length === 0 ? (
+                <Text className="text-center my-9">
+                  {t("No Tnventory purchased yet")}
+                </Text>
+              ) : (
+                <>
+                  {userData?.inventory.map((unit: any, index) => {
+                    return (
+                      <Pressable
+                        key={index}
+                        className="p-5 rounded-xl my-1 border border-muted"
+                        onPress={() => {
+                          router.push(
+                            `/(root)/(storage)/StorageDetails?storageId=${unit.id}&storageName=${unit?.name}`
+                          );
+                        }}
+                      >
+                        <View className="flex-row justify-between items-center my-1">
+                          <View className="flex-row items-center">
+                            <LucidIcons
+                              IconName={Box}
+                              size={24}
+                              color="green"
+                            />
+                            <Text className="text-lg font-bold ml-3 text-gray-800">
+                              {unit.name}
+                            </Text>
+                          </View>
+                          <View className="bg-green-100 px-3 py-1 rounded-full">
+                            <Text className="text-green-700 font-bold text-sm">
+                              Active
+                            </Text>
+                          </View>
+                        </View>
+                        <View className="space-y-2 mt-2">
+                          <Text className="text-sm text-gray-600">
+                            Crop type: {unit.crop.toLocaleUpperCase()}
+                          </Text>
+                          <Text className="text-sm text-gray-600">
+                            Area reserved : {unit.area}
+                          </Text>
+
+                          <Text className="text-sm text-gray-600">
+                            Area cost : {unit.cost} INR
+                          </Text>
+                          <Text className="text-sm text-gray-600">
+                            owner : {unit.owner}
+                          </Text>
+                        </View>
+                      </Pressable>
+                    );
+                  })}
+                  <Button
+                    variant={"secondary"}
+                    className="m-3"
+                    onPress={() =>
+                      router.push(
+                        "/(root)/(storage)/InventoriesPurchaseMapView"
+                      )
+                    }
+                  >
+                    <Text>Purchase more inventories</Text>
+                  </Button>
+                </>
+              )}
+            </>
+          )}
+        </View>
+      </ScrollView>,
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View className="p-3 pt-0">
+          {isStorageRentLoading ? (
+            <View className="flex items-center justify-center pt-20">
+              <LucidIcons IconName={Box} size={50} strokeWidth={1} />
+              <View className="flex items-center justify-center p-8 flex-row gap-3">
+                <ActivityIndicator animating />
+                <Text>{t("Loading your Inventories....")}</Text>
+              </View>
+            </View>
+          ) : (
+            <View className="px-3 mt-3">
+              {storageRentData?.length === 0 ? (
+                <Text>{t("No Inventories")}</Text>
+              ) : (
+                <>
+                  {storageRentData?.map((unit: Inventory, index) => {
+                    return (
+                      <Pressable
+                        key={index}
+                        className="p-5 rounded-xl my-1 border border-muted"
+                        onPress={() => {
+                          router.push(
+                            `/(root)/(storage)/StorageDetails?storageId=${unit._id}&storageName=${unit?.name}`
+                          );
+                        }}
+                      >
+                        <View className="flex-row justify-between items-center my-1">
+                          <View className="flex-row items-center">
+                            <LucidIcons
+                              IconName={Box}
+                              size={24}
+                              color="green"
+                            />
+                            <Text className="text-lg font-bold ml-3 text-gray-800">
+                              {unit.name}
+                            </Text>
+                          </View>
+                          <View className="bg-green-100 px-3 py-1 rounded-full">
+                            <Text className="text-green-700 font-bold text-sm">
+                              {t("Active")}
+                            </Text>
+                          </View>
+                        </View>
+                        <View className="space-y-2 mt-2">
+                          <Text className="text-sm text-gray-600">
+                            Crop type : {unit.crop.toLocaleUpperCase()}
+                          </Text>
+                          <Text className="text-sm text-gray-600">
+                            {t("Remaining Quantity")}:{" "}
+                            {unit.totalQuantity - unit.reservedQuantity} sq feet
+                          </Text>
+
+                          <Text className="text-sm text-gray-600">
+                            {t("Price Per Unit (PPU)")} : {unit.pricePerUnit}{" "}
+                            INR
+                          </Text>
+                          <Text className="text-sm text-gray-600">
+                            {t("Storage address")} : {unit.location.address} INR
+                          </Text>
+                          <Text className="text-sm text-gray-600">
+                            {t("Taken by")}: {unit.takenBy?.length}{" "}
+                            {t("Buyers")}
+                          </Text>
+                        </View>
+                      </Pressable>
+                    );
+                  })}
+                </>
+              )}
+              <Button
+                onPress={() => router.push("/(root)/(storage)/AddNewInventory")}
+                variant={"outline"}
+                className="flex flex-row gap-3 items-center justify-center my-5"
+              >
+                <LucidIcons IconName={Plus} />
+                <Text>{t("Add more Inventories")}</Text>
+              </Button>
+
+              <View className="p-10" />
+            </View>
+          )}
+        </View>
+      </ScrollView>,
+    ];
+  }, [userData, storageRentData]);
 
   return (
     <>
-      <MapView
-        style={styles.map}
-        initialRegion={{
-          latitude: Latitude,
-          longitude: Longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }}
-        loadingEnabled={true}
-        showsMyLocationButton={true}
-        onRegionChangeComplete={(data) => {
-          setCurrentRegion({ lan: data.latitude, Long: data.longitude });
-        }}
-      >
-        <Marker
-          coordinate={{
-            latitude: Latitude,
-            longitude: Longitude,
-          }}
-          title={t("Current location")}
-          pinColor="indigo"
-          isPreselected={true}
-        />
-        {InventoriesNearby.map((marker: Inventory, index: number) => {
-          return (
-            <Marker
-              key={index}
-              coordinate={{
-                latitude: marker?.location.coordinates.coordinates[0],
-                longitude: marker?.location.coordinates.coordinates[1],
-              }}
-              title={marker.name}
-              description={
-                marker.totalQuantity -
-                marker.reservedQuantity +
-                t(" sq feet remaining")
-              }
-              onPress={() => {
-                handleMarkerPress(marker);
-              }}
-            />
-          );
-        })}
-      </MapView>
-      <View
-        className="absolute flex items-center justify-between flex-row w-full p-5"
-        style={{ top: StatusBar.currentHeight || 0 + 5 }}
-      >
-        <Button
-          variant={"outline"}
-          className="rounded-full flex gap-3 flex-row justify-center items-center"
-          onPress={() => router.back()}
-        >
-          <LucidIcons IconName={ArrowLeft} />
-        </Button>
-        <Button
-          variant={"outline"}
-          className="rounded-full flex gap-3 flex-row justify-center items-center"
-          onPress={async () => {
-            if (!loadingMarkers) {
-              await fetchMarkers(
-                CurrentRegion?.lan ?? Latitude,
-                CurrentRegion?.Long ?? Longitude
-              );
-            }
-          }}
-        >
-          {loadingMarkers ? (
-            <>
+      <View className="flex-row justify-between px-3">
+        {[
+          {
+            value: isPurchaseInventoryLoading ? (
               <ActivityIndicator animating />
-              <Text>{t("Loading...")}</Text>
-            </>
-          ) : (
-            <>
-              <LucidIcons IconName={RefreshCwIcon} />
-              <Text>{t("Refresh")}</Text>
-            </>
-          )}
-        </Button>
-      </View>
-      <View className="absolute w-full bg-white bottom-0 dark:bg-black">
-        <Text className="text-sm text-center px-2 text-indigo-600">
-          {InventoriesNearby?.length} {t("Inventories showed")}
-        </Text>
-        <Text className="text-sm text-center px-2">
-          {t("Select a storage facility to show more details")}
-        </Text>
-      </View>
-      <BottomSheetComponent
-        title={
-          selectedMarker
-            ? selectedMarker.name
-            : "Select a marker to see details"
-        }
-        subTitle={selectedMarker ? selectedMarker.location.address : ""}
-        BottomSheetFooterComponent={
-          <Button
-            variant={"secondary"}
-            onPress={() =>
-              router.push(
-                `/(root)/(storage)/StorageDetails?storage=${JSON.stringify(
-                  selectedMarker
-                )}`
-              )
-            }
+            ) : (
+              userData?.inventory?.length
+            ),
+            label: t("Total purchased inventories"),
+          },
+          {
+            value: isStorageRentLoading ? (
+              <ActivityIndicator animating />
+            ) : (
+              storageRentData?.length
+            ),
+            label: t("Total Storage rent"),
+          },
+          {
+            value:
+              currentTab === 0 ? (
+                isPurchaseInventoryLoading ? (
+                  <ActivityIndicator animating />
+                ) : (
+                  TotalAreaReserved
+                )
+              ) : isStorageRentLoading ? (
+                <ActivityIndicator animating />
+              ) : (
+                TotalAreaAdded
+              ),
+            label:
+              currentTab === 0
+                ? t("Total area reserved (sq feet)")
+                : t("Total area added (sq feet)"),
+          },
+        ].map((stat, index) => (
+          <View
+            key={index}
+            className="p-5 rounded-xl items-center w-[32%] border border-muted"
           >
-            <Text>{t("More details")}</Text>
-          </Button>
-        }
-        ref={bottomSheetRef}
-        children={
-          <>
-            <Text className="text-center pb-2">
-              ₹{selectedMarker?.pricePerUnit} per sq feet
+            <Text className="text-2xl font-bold text-green-800 mt-2 text-center">
+              {stat.value}
             </Text>
-          </>
-        }
+            <Text className="text-sm text-gray-500 text-center">
+              {stat.label}
+            </Text>
+          </View>
+        ))}
+      </View>
+      <TabComponent
+        tabsData={tabsData}
+        Pages={TabPages}
+        setCurrentTab={setcurrentTab}
       />
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  map: {
-    width: Dimensions.get("screen").width,
-    height: Dimensions.get("screen").height,
-  },
-});

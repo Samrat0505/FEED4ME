@@ -2,7 +2,9 @@ import { View, Text, Pressable, ScrollView } from "react-native";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import {
+  BookOpen,
   Bug,
+  DollarSign,
   Droplet,
   Leaf,
   Mail,
@@ -13,13 +15,19 @@ import {
 import { useTranslation } from "react-i18next";
 import LucidIcons from "~/lib/LucidIcons";
 
-const ContactUs = () => {
+const Support = () => {
   const { t } = useTranslation();
   const data = [
-    { icon: Leaf, title: "Crop Management" },
-    { icon: Droplet, title: "Irrigation Control" },
-    { icon: Bug, title: "Pesticides Control" },
-    { icon: Thermometer, title: "Climate Control" },
+    {
+      icon: BookOpen,
+      title: "Training",
+      description: "videos of related field (Youtube Videos)",
+    },
+    {
+      icon: DollarSign,
+      title: "Loans",
+      description: "Get loan with low interst rate",
+    },
   ];
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
@@ -37,6 +45,9 @@ const ContactUs = () => {
                 color="green"
               />
               <Text className="font-bold pt-2 text-xl">{t(topic.title)}</Text>
+              <Text className="text-sm text-muted-foreground">
+                {topic.description}
+              </Text>
             </Pressable>
           );
         })}
@@ -81,4 +92,4 @@ const ContactUs = () => {
   );
 };
 
-export default ContactUs;
+export default Support;

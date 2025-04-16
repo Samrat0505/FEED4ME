@@ -14,18 +14,33 @@ const Layout = () => {
       headerShown: false,
     },
     {
-      route: "Production",
+      route: "(Production)/Production",
       name: "Production Overview",
       headerShown: true,
     },
     {
-      route: "Transport",
-      name: "Transport Hub",
+      route: "(Production)/AddNewCrop",
+      name: "Add New Crop",
+      headerShown: true,
+    },
+    {
+      route: "Purchase",
+      name: "Purchase",
       headerShown: true,
     },
     {
       route: "(storage)/Storage",
       name: "Storage Management",
+      headerShown: true,
+    },
+    {
+      route: "(storage)/AddNewInventory",
+      name: "Add New Inventory",
+      headerShown: true,
+    },
+    {
+      route: "(storage)/InventoriesPurchaseMapView",
+      name: "Map view",
       headerShown: false,
     },
     {
@@ -34,13 +49,38 @@ const Layout = () => {
       headerShown: false,
     },
     {
-      route: "Waste",
+      route: "(Wastage)/Waste",
       name: "Waste Management",
       headerShown: true,
     },
     {
-      route: "ContactUs",
+      route: "(Wastage)/ReportFoodWaste",
+      name: "Report Waste",
+      headerShown: true,
+    },
+    {
+      route: "(Wastage)/selfWasteReport",
+      name: "Your Reported Waste",
+      headerShown: true,
+    },
+    {
+      route: "Support",
       name: "Support Center",
+      headerShown: true,
+    },
+    {
+      route: "chat/index",
+      name: "Chat with Farmers",
+      headerShown: true,
+    },
+    {
+      route: "chat/ChatScreen",
+      name: "Unknown",
+      headerShown: true,
+    },
+    {
+      route: "NewsFeed",
+      name: "Daily Updates",
       headerShown: true,
     },
   ];
